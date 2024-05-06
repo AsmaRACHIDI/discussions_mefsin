@@ -3,3 +3,7 @@ trained_models/
 
 # Ignorer le dossier venv/ (utilisé généralement pour les environnements virtuels Python)
 venv/
+
+app/static/data/
+
+*.cpython-38.pyc
