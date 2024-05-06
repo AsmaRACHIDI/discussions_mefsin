@@ -1,0 +1,5 @@
+# Ignorer le dossier trained_models/
+trained_models/
+
+# Ignorer le dossier venv/ (utilisé généralement pour les environnements virtuels Python)
+venv/

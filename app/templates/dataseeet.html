@@ -1,0 +1,49 @@
+{% extends 'base.html' %}
+
+{% block title %}CategorIA | Dataset{% endblock %}
+
+{% block content %}
+    {% include 'sidebar.html' %}
+
+    <section class="dashboard">
+        <div class="text">Présentation du jeu de données annoté par le modèle d'IA</div>
+        <div class="table-container">
+            <table id="example" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        {% for col in columns %}
+                            <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            {% for value in row %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <!-- <tfoot>
+                    <tr>
+                        {% for col in columns %}
+                            <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </tfoot> -->
+            </table>
+        <div class="mt-3">
+            <div class="dropdown">
+                <button class="btn btn-secondary dropdown-toggle" type="button" id="downloadMenu" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    Télécharger
+                </button>
+                <div class="dropdown-menu" aria-labelledby="downloadMenu">
+                    <a class="dropdown-item" href="/dataset/download/csv">CSV</a>
+                    <a class="dropdown-item" href="/dataset/download/excel">Excel</a>
+                    <a class="dropdown-item" href="/dataset/download/json">JSON</a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

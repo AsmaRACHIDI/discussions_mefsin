@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block title %}CategorIA | Formulaire{% endblock %}
+
+{% block content %}
+    {% include 'sidebar.html' %}
+
+    <section class="dashboard">
+        <div class="text">Jouer avec l'IA</div>
+        <form action="/" method="post">
+            <div class="form_box">
+                <label for="title">Titre :</label><br>
+                <br>
+                <input type="text" id="title" name="title"><br>
+                <br><br>
+                <label for="message">Message :</label><br>
+                <br>
+                <textarea id="message" name="message" rows="4" cols="50"></textarea><br>
+                <br><br>
+                <input type="submit" value="Soumettre">
+            </div>
+        </form>
+    </section>
+{% endblock %}

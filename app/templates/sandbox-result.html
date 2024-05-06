@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+
+{% block title %}CategorIA | Inference{% endblock %}
+
+{% block content %}
+    {% include 'sidebar.html' %}
+    
+    <section class="dashboard">
+        <div class="text">Résultats de l'inférence</div>
+        <div class="result-box">
+            <div class="card">
+                <div class="card-header">
+                    Commentaire
+                </div>
+                <div class="card-body">
+                    <div class="info-box">
+                        <p class="category-label">Titre :</p>
+                        <p class="subcategory-content">{{ title }}</p>
+                    </div>
+                    <div class="info-box">
+                        <p class="category-label">Message :</p>
+                        <p class="subcategory-content">{{ message }}</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    Prédictions
+                </div>
+                <div class="card-body">
+                    <div class="info-box">
+                        <p class="subcategory-label">Catégorie prédite :</p>
+                        <p class="subcategory-content">{{ prediction_motif }}</p>
+                    </div>
+                    <div class="info-box">
+                        <p class="subcategory-label">Sous-catégorie prédite :</p>
+                        <p class="subcategory-content">{{ prediction_sous_motif }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <a href="/" class="button">Revenir au formulaire</a>
+    </section>
+{% endblock %}

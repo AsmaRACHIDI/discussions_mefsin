@@ -1,0 +1,44 @@
+{% extends 'base.html' %}
+
+{% block title %}CategorIA | Dataset{% endblock %}
+
+{% block content %}
+    {% include 'sidebar.html' %}
+
+    <section class="dashboard">
+        <div class="text">Présentation du jeu de données annoté par le modèle d'IA</div>
+        <div class="table-container">
+            <table id="example" class="table table-striped" style="width:100%">
+                <thead>
+                    <tr>
+                        {% for col in columns %}
+                            <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for row in data %}
+                        <tr>
+                            {% for value in row %}
+                                <td>{{ value }}</td>
+                            {% endfor %}
+                        </tr>
+                    {% endfor %}
+                </tbody>
+                <!-- <tfoot>
+                    <tr>
+                        {% for col in columns %}
+                            <th>{{ col }}</th>
+                        {% endfor %}
+                    </tr>
+                </tfoot> -->
+            </table>
+        <div class="mt-3">
+            <div class="btn-group">
+                <a href="/dataset/download/csv" class="btn btn-primary">Télécharger CSV</a>
+                <a href="/dataset/download/excel" class="btn btn-success">Télécharger Excel</a>
+                <a href="/dataset/download/json" class="btn btn-info">Télécharger JSON</a>
+            </div>
+        </div>
+    </section>
+{% endblock %}
