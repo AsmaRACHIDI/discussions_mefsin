@@ -31,4 +31,4 @@ for d in data:
     #     }
     report.append({**discussion})
 
-append_to_csv("data/dataset.csv", report)
+append_to_csv("app/static/data/dataset.csv", report)

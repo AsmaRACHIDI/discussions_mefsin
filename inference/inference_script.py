@@ -21,7 +21,7 @@ sslabel2id = categories.SSLABEL2ID
 
 
 def load_model_from_zip(model_zip, extraction_number):
-    extract_dir = f"/home/oem/Documents/open-data-discussions/trained_models/extracted_model{extraction_number}"
+    extract_dir = f"/home/asma/Documents/open-data-discussions/trained_models/extracted_model{extraction_number}"
 
     with zipfile.ZipFile(model_zip, "r") as zip_ref:
         zip_ref.extractall(extract_dir)
@@ -55,9 +55,9 @@ def perform_inference(model, tokenizer, input_dataframe, is_second_preprocess=Fa
     return predictions
 
 
-def annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-data-discussions/app/static/data/dataset.csv", output_csv_file_model="models_predicted_data.csv"):
-    model1_zip_file = "/home/oem/Documents/open-data-discussions/trained_models/bert-finetuned-my-data-final_archive.zip"
-    model2_zip_file = "/home/oem/Documents/open-data-discussions/trained_models/bert-finetuned-my-data-final2_archive2.zip"
+def annotate_data_from_csv_file(input_csv_df_mefsin="/home/asma/Documents/open-data-discussions/app/static/data/dataset.csv", output_csv_file_model="app/static/data/models_predicted_data.csv"):
+    model1_zip_file = "/home/asma/Documents/open-data-discussions/trained_models/bert-finetuned-my-data-final_archive.zip"
+    model2_zip_file = "/home/asma/Documents/open-data-discussions/trained_models/bert-finetuned-my-data-final2_archive2.zip"
 
     # Chargez et préparez les modèles
     model1, tokenizer1 = load_model_from_zip(model1_zip_file, 1)
@@ -83,8 +83,8 @@ def annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-da
 
 
 def annotate_a_message(title, message):
-    extract_dir1 = f"/home/oem/Documents/open-data-discussions/trained_models/extracted_model1"
-    extract_dir2 = f"/home/oem/Documents/open-data-discussions/trained_models/extracted_model2"
+    extract_dir1 = f"/home/asma/Documents/open-data-discussions/trained_models/extracted_model1"
+    extract_dir2 = f"/home/asma/Documents/open-data-discussions/trained_models/extracted_model2"
 
     # Charger et préparer les modèles
     model1 = AutoModelForSequenceClassification.from_pretrained(extract_dir1)
@@ -110,7 +110,7 @@ def annotate_a_message(title, message):
     return prediction_motif, prediction_sous_motif
 
 
-#annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-data-discussions/dataset.csv", output_csv_file_model="test.csv")
+#annotate_data_from_csv_file(input_csv_df_mefsin="/home/asma/Documents/open-data-discussions/dataset.csv", output_csv_file_model="test.csv")
 
 #prediction_motif, prediction_sous_motif = annotate_a_message("Problème d'accès aux données", "Bonjour, j'essaye d'accéder aux données mais je n'y arrive pas. Merci de m'aider. Cordialement.")
 #print("Catégorie prédite:", prediction_motif)
