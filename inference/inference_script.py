@@ -93,7 +93,7 @@ def annotate_a_message(title, message):
     tokenizer2 = AutoTokenizer.from_pretrained(extract_dir2)
 
     df = pd.DataFrame([{'title': title, 'first_message': message}])
-    df.to_csv("data/res_inferance.csv", sep=';', index=False)
+    df.to_csv("app/static/data/res_sandbox_inferance.csv", sep=';', index=False)
 
     # Inférence avec le modèle 1
     predictions_model1 = perform_inference(model1, tokenizer1, df)
