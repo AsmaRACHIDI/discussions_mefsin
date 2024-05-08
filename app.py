@@ -33,16 +33,27 @@ def sandbox_route():
         # Redirigez vers la page /results avec les données du formulaire
         return redirect(url_for("sandbox_result", title=title, message=message, prediction_motif=prediction_motif, prediction_sous_motif=prediction_sous_motif))
 
-@app.route("/form/results")
+@app.route("/form/results", methods=["GET", "POST"])
 def sandbox_result():
-    # Récupérez les données passées depuis le formulaire
-    title = request.args.get("title")
-    message = request.args.get("message")
-    prediction_motif = request.args.get("prediction_motif")
-    prediction_sous_motif = request.args.get("prediction_sous_motif")
-    
-    # Affichez les résultats sur la page /results
-    return render_template("sandbox-result.html", title=title, message=message, prediction_motif=prediction_motif, prediction_sous_motif=prediction_sous_motif)
+    if request.method == "GET":
+        # Traitement pour la méthode GET
+        # Récupérez les données passées depuis le formulaire
+        title = request.args.get("title")
+        message = request.args.get("message")
+        prediction_motif = request.args.get("prediction_motif")
+        prediction_sous_motif = request.args.get("prediction_sous_motif")
+        
+        # Affichez les résultats sur la page /results
+        return render_template("sandbox-result.html", title=title, message=message, prediction_motif=prediction_motif, prediction_sous_motif=prediction_sous_motif)
+    elif request.method == "POST":
+        # Traitement pour la méthode POST
+        # Effectuez le traitement du formulaire POST ici si nécessaire
+        title = request.form.get("title")
+        message = request.form.get("message")
+        prediction_motif, prediction_sous_motif = annotate_a_message(title=title, message=message)
+
+        # Redirigez vers la page /results avec les données du formulaire
+        return redirect(url_for("sandbox_result", title=title, message=message, prediction_motif=prediction_motif, prediction_sous_motif=prediction_sous_motif))
 
 ##################### Dataset : Visualiser et Télécharger #################################################################
 
