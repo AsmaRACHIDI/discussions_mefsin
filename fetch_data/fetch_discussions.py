@@ -1,7 +1,6 @@
 import json
 import requests
 from format import dump_json, open_json, append_to_csv
-from inference.inference_script import annotate_data_from_csv_file
 
 def fetch_discussions(api_url):
     """
@@ -54,8 +53,6 @@ def main():
     
     # Ajoute les discussions formatées à un fichier CSV
     append_to_csv("app/static/data/dataset.csv", formatted_discussions)
-
-    annotate_data_from_csv_file()
 
 if __name__ == "__main__":
     main()
