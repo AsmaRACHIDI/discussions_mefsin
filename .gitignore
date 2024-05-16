@@ -7,3 +7,6 @@ venv/
 app/static/data/
 
 *.cpython-38.pyc
+
+*.json
+*.csv
