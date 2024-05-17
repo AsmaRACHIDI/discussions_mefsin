@@ -10,3 +10,4 @@ app/static/data/
 
 *.json
 *.csv
+.env
