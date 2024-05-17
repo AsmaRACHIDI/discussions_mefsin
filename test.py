@@ -13,7 +13,7 @@ HEADERS = {"Authorization": f"Apikey {os.environ['KEY']}"}
 def get_datasets(api_url, headers):
     try:
         response = requests.get(api_url, headers=headers)
-        response.raise_for_status()  # Will raise HTTPError for bad responses
+        response.raise_for_status() 
         return response.json()
     except requests.exceptions.HTTPError as http_err:
         print(f"HTTP error occurred: {http_err}")
@@ -43,7 +43,6 @@ def main():
             feedbacks = get_feedbacks(dataset_uid, HEADERS)
             if feedbacks:
                 print(f"Feedbacks pour le dataset {dataset_uid}: {feedbacks}")
-                # Append feedbacks to a CSV file (example function, implement as needed)
                 append_to_csv("feedbacks.csv", feedbacks)
             else:
                 print(f"Impossible de récupérer les feedbacks pour le dataset {dataset_uid}")
