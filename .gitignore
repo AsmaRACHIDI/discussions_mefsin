@@ -4,7 +4,9 @@ trained_models/
 # Ignorer le dossier venv/ (utilisé généralement pour les environnements virtuels Python)
 venv/
 
-app/static/data/
+# Ignorer tout le contenu du dossier app/static/data mais pas le dossier lui-même
+app/static/data/*
+#!app/static/data/.gitkeep
 
 *.pyc
 
