@@ -1,8 +1,9 @@
 import pytest
 import os
-from dotenv import load_dotenv
+import csv
 
-from tmp import fetch_discussions_from_data_gouv_api, fetch_datasets_from_data_eco_api, fetch_discussions_from_data_eco_api, format_data
+from dotenv import load_dotenv
+from tmp import fetch_discussions_from_data_gouv_api, fetch_datasets_from_data_eco_api, fetch_discussions_from_data_eco_api, format_data, save_to_csv
 
 # Récupération des variables d'environnement
 load_dotenv()
@@ -46,24 +47,131 @@ def test_fetch_discussions_from_data_eco_api():
     print(len(data["records"]))
 
 
-def test_format_data_data_gouv():
-    data_json = [
-        {"id": 1, "created": "2024-05-15", "closed": True, "subject": {"id": 123}, "title": "Discussion 1", "discussion": [{"content": "Message 1"}]},
-        {"id": 2, "created": "2024-05-16", "closed": False, "subject": {"id": 456}, "title": "Discussion 2", "discussion": [{"content": "Message 2"}]}
+def test_format_data_gouv_discussions():
+    sample_data = [
+        {
+            "id": "1",
+            "created": "2023-01-01T00:00:00Z",
+            "closed": "2023-01-02T00:00:00Z",
+            "subject": {"id": "dataset_1"},
+            "title": "Discussion 1",
+            "discussion": [{"content": "First message"}],
+            "url": "http://example.com/discussion/1"
+        },
+        {
+            "id": "2",
+            "created": "2023-01-03T00:00:00Z",
+            "closed": "2023-01-04T00:00:00Z",
+            "subject": {"id": "dataset_2"},
+            "title": "Discussion 2",
+            "discussion": [{"content": "First message"}],
+            "url": "http://example.com/discussion/2"
+        }
     ]
-    formatted_data = format_data(data_json, "data_gouv")
+    formatted_data = format_data(sample_data, "data_gouv_discussions")
     assert isinstance(formatted_data, list)
     assert len(formatted_data) == 2
-    assert "id" in formatted_data[0]
-    assert "created" in formatted_data[0]
+    for discussion in formatted_data:
+        assert "id" in discussion
+        assert "created" in discussion
+        assert "closed" in discussion
+        assert "dataset_id" in discussion
+        assert "title" in discussion
+        assert "first_message" in discussion
+        assert "url_discussion" in discussion
 
-def test_format_data_data_eco_gouv():
-    data_json = [
-        {"id": 1, "name": "Dataset 1"},
-        {"id": 2, "name": "Dataset 2"}
+
+def test_format_data_eco_datasets():
+    sample_data = [
+        {
+            "dataset_id": "1",
+            "metas": {
+                "default": {
+                    "title": "Dataset 1",
+                    "publisher": "Publisher 1",
+                    "modified": "2023-01-02T00:00:00Z"
+                },
+                "dcat": {
+                    "created": "2023-01-01T00:00:00Z"
+                }
+            }
+        },
+        {
+            "dataset_id": "2",
+            "metas": {
+                "default": {
+                    "title": "Dataset 2",
+                    "publisher": "Publisher 2",
+                    "modified": "2023-01-04T00:00:00Z"
+                },
+                "dcat": {
+                    "created": "2023-01-03T00:00:00Z"
+                }
+            }
+        }
     ]
-    formatted_data = format_data(data_json, "data_eco_gouv")
+    formatted_data = format_data(sample_data, "data_eco_datasets")
     assert isinstance(formatted_data, list)
     assert len(formatted_data) == 2
-    assert "id" in formatted_data[0]
-    assert "name" in formatted_data[0]
+    for dataset in formatted_data:
+        assert "id" in dataset
+        assert "title" in dataset
+        assert "publisher" in dataset
+        assert "created_at" in dataset
+        assert "updated_at" in dataset
+
+
+def test_format_data_eco_discussions():
+    sample_data = [
+        {
+            "id_jdd": "dataset_1",
+            "id": "1",
+            "id_parent": "0",
+            "sujet": "Discussion 1",
+            "pseudo": "User1",
+            "commentaire": "First message",
+            "horodotage": "2023-01-01T00:00:00Z",
+            "username": "user1"
+        },
+        {
+            "id_jdd": "dataset_2",
+            "id": "2",
+            "id_parent": "0",
+            "sujet": "Discussion 2",
+            "pseudo": "User2",
+            "commentaire": "Second message",
+            "horodotage": "2023-01-02T00:00:00Z",
+            "username": "user2"
+        }
+    ]
+    formatted_data = format_data(sample_data, "data_eco_discussions")
+    assert isinstance(formatted_data, list)
+    assert len(formatted_data) == 2
+    for discussion in formatted_data:
+        assert "id_jdd" in discussion
+        assert "id_message" in discussion
+        assert "id_parent_message" in discussion
+        assert "title" in discussion
+        assert "pseudo" in discussion
+        assert "comment" in discussion
+        assert "date" in discussion
+        assert "username" in discussion
+
+
+def test_save_to_csv():
+    sample_data = [
+        {"id": "1", "title": "Discussion 1", "created_at": "2023-01-01T00:00:00Z", "updated_at": "2023-01-02T00:00:00Z"},
+        {"id": "2", "title": "Discussion 2", "created_at": "2023-01-03T00:00:00Z", "updated_at": "2023-01-04T00:00:00Z"}
+    ]
+    filename = "test_output.csv"
+    save_to_csv(sample_data, filename)
+    assert os.path.exists(filename)
+
+    with open(filename, 'r', encoding='utf-8') as f:
+        reader = csv.DictReader(f)
+        rows = list(reader)
+        assert len(rows) == 2
+        assert rows[0]["id"] == "1"
+        assert rows[1]["id"] == "2"
+
+    os.remove(filename)  # Suppression du csv après le test

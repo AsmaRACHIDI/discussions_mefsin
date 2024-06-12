@@ -1,6 +1,7 @@
 import json
 import requests
 import os
+import csv
 
 from dotenv import load_dotenv
 from format import dump_json, append_to_csv
@@ -11,8 +12,7 @@ load_dotenv()
 HEADERS = {"Authorization": f"Apikey {os.environ['KEY']}"}
 
 
-def fetch_discussions_from_data_gouv_api() -> dict:
-#def fetch_data_from_data_gouv_api(api_url: str, page: int = 1) -> dict:
+def fetch_discussions_from_data_gouv_api() -> list:
     """
     Récupère les discussions à partir de l'API de data.gouv.fr
     """
@@ -20,21 +20,20 @@ def fetch_discussions_from_data_gouv_api() -> dict:
     
     try:
         response = requests.get(api_url)
-        response.raise_for_status()  # Lève une exception si la requête échoue
+        response.raise_for_status()
         data_json = response.json()
         print(data_json)
         # Sauvegarde les discussions formatées au format JSON
-        dump_json("all_data_gouv_discussions.json", data_json)
+        dump_json("app/static/data/all_data_gouv_discussions.json", data_json)
         return data_json
     except requests.RequestException as e:
         print(f"Erreur lors de la requête : {e}")
         return []
 
 
-def fetch_datasets_from_data_eco_api() -> dict:
-#def fetch_data_from_data_eco_api(api_url: str) -> dict:
+def fetch_datasets_from_data_eco_api() -> list:
     """
-    Récupère les données brutes à partir de l'API de data.economie.gouv.fr
+    Récupère les datasets à partir de l'API de data.economie.gouv.fr
     """
     all_data = []
 
@@ -50,6 +49,7 @@ def fetch_datasets_from_data_eco_api() -> dict:
 
     while True:
         response = requests.get(api_url, headers=HEADERS, params=params)
+        #response.raise_for_status()
 
         if response.status_code != 200:
             print(f"Error fetching data. Status code: {response.status_code}")
@@ -59,19 +59,19 @@ def fetch_datasets_from_data_eco_api() -> dict:
         data = response.json()
         all_data.extend(data["results"])
 
-        # COndition de sortie
+        # Condition de sortie
         if len(data["results"]) < 100:  # Si le nombre d'éléments récupérés est inférieur à la limite par page, cela signifie que nous avons récupéré tous les éléments disponibles
             break
 
         params["offset"] += 100  # Déplacer l'offset pour récupérer la page suivante
 
     # Sauvegarde les discussions formatées au format JSON
-    dump_json("all_data_eco_datasets.json", all_data)
+    dump_json("app/static/data/all_data_eco_datasets.json", all_data)
 
     return all_data
 
 
-def fetch_discussions_from_data_eco_api() -> dict:
+def fetch_discussions_from_data_eco_api() -> list:
     """
     Récupère les données brutes à partir de l'API de data.economie.gouv.fr
     """
@@ -97,7 +97,7 @@ def fetch_discussions_from_data_eco_api() -> dict:
             offset += limit
         
         # Sauvegarde les discussions formatées au format JSON
-        dump_json("all_data_eco_discussions.json", {"records": all_data})
+        dump_json("app/static/data/all_data_eco_discussions.json", {"records": all_data})
         return {"records": all_data, "total_count": total_count}
 
     except requests.exceptions.HTTPError as http_err:
@@ -113,7 +113,7 @@ def format_data(data_json, api_type):
     """
     formatted_data = []
 
-    if api_type == "data_gouv":
+    if api_type == "data_gouv_discussions":
         for discussion in data_json:
             formatted_discussion = {
                 "id": discussion["id"],
@@ -125,52 +125,68 @@ def format_data(data_json, api_type):
                 "url_discussion": discussion["url"]
             }
             formatted_data.append(formatted_discussion)
-            ###
-            ###
-            ### CSV
-            ###
-            ###
 
-    elif api_type == "data_eco":
-        formatted_data = [{"id": dataset["dataset_id"], 
-                           "uid": dataset["dataset_uid"], 
-                           "title": dataset["metas"]["default"]["title"], 
-                           "publisher": dataset["metas"]["default"]["publisher"], 
-                           "url_source": dataset["metas"]["default"]["references"]
-                           } for dataset in data_json]
+    elif api_type == "data_eco_datasets":
+            formatted_data = [{"id": dataset["dataset_id"], 
+                            "title": dataset["metas"]["default"]["title"], 
+                            "publisher": dataset["metas"]["default"]["publisher"],
+                            "created_at": dataset["metas"]["dcat"]["created"], 
+                            "updated_at": dataset["metas"]["default"]["modified"]
+                            } for dataset in data_json]
+
+    elif api_type == "data_eco_discussions":
+        formatted_data = [{"id_jdd": discussion["id_jdd"], 
+                           "id_message": discussion["id"], 
+                           "id_parent_message": discussion["id_parent"], 
+                           "title": discussion["sujet"], 
+                           "pseudo": discussion["pseudo"], 
+                           "comment": discussion["commentaire"],
+                           "date": discussion["horodotage"],
+                           "username": discussion["username"]
+                           } for discussion in data_json]
         
     else:
         print("Type d'API non valide.")
 
     return formatted_data
 
+
+def save_to_csv(data: list, filename: str):
+    """
+    Sauvegarde les données au format CSV.
+    """
+    if not data:
+        print("Aucune donnée à sauvegarder")
+        return
+
+    keys = data[0].keys()
+
+    with open(filename, 'w', newline='', encoding='utf-8') as output_file:
+        dict_writer = csv.DictWriter(output_file, fieldnames=keys)
+        dict_writer.writeheader()
+        dict_writer.writerows(data)
+
+    print(f"Les données ont été sauvegardées dans le fichier {filename}")
+
 def main(api_type):
 
     if api_type == "data_gouv":
-        api_url = "https://www.data.gouv.fr/api/1/organizations/ministere-de-leconomie-des-finances-et-de-la-souverainete-industrielle-et-numerique/discussions"
+        data_json = fetch_discussions_from_data_gouv_api()
+        formatted_data = format_data(data_json, "data_gouv_discussions")
+        save_to_csv(formatted_data, "app/static/data/data_gouv_discussions.csv")
    
     elif api_type == "data_eco":
-        api_url = "https://data.economie.gouv.fr/api/explore/v2.1/catalog/datasets"
-    
-    else:
-        print("Type d'API non valide.")
-        return
-    
-    # Récupère les données depuis l'API
-    data_json = fetch_discussions_from_data_gouv_api() if api_type == "data_gouv" else get_discussions_from_data_eco_api()
-    
-    # Formate les données pour l'exportation CSV
-    formatted_data = format_data(data_json, api_type)
-    
-    # Exporte les données au format CSV
-    if api_type == "data_gouv":
-        append_to_csv("data_gouv_datasets.csv", formatted_data)
-    
-    elif api_type == "data_eco":
-        append_to_csv("data_eco_datasets.csv", formatted_data)
+        data_json_datasets = fetch_datasets_from_data_eco_api()
+        formatted_data_datasets = format_data(data_json_datasets, "data_eco_datasets")
+        save_to_csv(formatted_data_datasets, "app/static/data/data_eco_datasets.csv")
+
+        data_json_discussions = fetch_discussions_from_data_eco_api()
+        formatted_data_discussions = format_data(data_json_discussions, "data_eco_discussions")
+        save_to_csv(formatted_data_discussions, "app/static/data/data_eco_discussions.csv")
     
     else:
         print("Type d'API non valide.")
 
 if __name__ == "__main__":
     main("data_gouv")
+    main("data_eco")
