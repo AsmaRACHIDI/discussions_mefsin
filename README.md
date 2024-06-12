@@ -72,3 +72,17 @@ $ python commands.py
 
 Pré-requis : avoir installé Docker et docker-compose.
 Les commandes liées sont dans le fichier `Makefile`.
+
+
+
+
+Créer un dossier data dans app/static/
+creer un fichier .env avec KEY= api_key
+créer un environnement virtuel avec virtualenv -p python3.11 venv
+curl -sS https://bootstrap.pypa.io/get-pip.py | python3
+
+récupérer les zip des poids des modèles
+
+Documents/open-data-discussions/trained_models/bert-finetuned-my-data-final_archive.zip
+
+pytest -k test_fetch_discussions_from_data_gouv_api
