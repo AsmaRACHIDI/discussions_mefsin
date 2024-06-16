@@ -517,6 +517,10 @@ input[type="submit"]:hover {
     width: 100%;
 }
 
-#bar-chart {
+#bar-chart-problemes {
+    width: 100%; /* Make sure the chart container takes full width */
+}
+
+#bar-chart-discussions {
     width: 100%; /* Make sure the chart container takes full width */
 }
