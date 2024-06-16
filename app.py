@@ -60,7 +60,7 @@ def sandbox_result():
 @app.route('/dataset')
 def dataset():
     # Charger le fichier CSV en tant que DataFrame
-    df = pd.read_csv("app/static/data/dataset.csv", delimiter=";")
+    df = pd.read_csv("app/static/data/data_gouv_discussions.csv", delimiter=",")
     df = df.reset_index()
     # Convertir le DataFrame en un dictionnaire de listes
     data_dict = df.to_dict(orient='split')
@@ -70,12 +70,12 @@ def dataset():
 
 @app.route('/dataset/download/csv')
 def download_csv():
-    return send_file("app/static/data/dataset.csv", as_attachment=True)
+    return send_file("app/static/data/data_gouv_discussions.csv", as_attachment=True)
 
 @app.route('/dataset/download/excel')
 def download_excel():
     # Télécharger le fichier Excel
-    df = pd.read_csv("app/static/data/dataset.csv", delimiter=";")
+    df = pd.read_csv("app/static/data/data_gouv_discussions.csv", delimiter=",")
     output = 'dataset.xlsx'
     df.to_excel(output, index=False)
     return send_file(output, as_attachment=True)
@@ -83,7 +83,7 @@ def download_excel():
 @app.route('/dataset/download/json')
 def download_json():
     # Charger le fichier CSV en tant que DataFrame
-    df = pd.read_csv("app/static/data/dataset.csv", delimiter=";")
+    df = pd.read_csv("app/static/data/data_gouv_discussions.csv", delimiter=",")
     
     # Convertir le DataFrame en JSON
     output = df.to_json(orient='records')
