@@ -6,6 +6,9 @@ import pandas as pd
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
+# Ensure the 'inference' directory is in the Python path
+sys.path.append('/home/oem/Documents/open-data-discussions')
+
 from inference.preprocess import preprocess_data
 
 from inference import categories
@@ -55,7 +58,7 @@ def perform_inference(model, tokenizer, input_dataframe, is_second_preprocess=Fa
     return predictions
 
 
-def annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-data-discussions/app/static/data/dataset.csv", output_csv_file_model="app/static/data/models_predicted_data.csv"):
+def annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-data-discussions/app/static/data/data_gouv_discussions.csv", output_csv_file_model="app/static/data/models_predicted_data.csv"):
     model1_zip_file = "/home/oem/Documents/open-data-discussions/trained_models/bert-finetuned-my-data-final_archive.zip"
     model2_zip_file = "/home/oem/Documents/open-data-discussions/trained_models/bert-finetuned-my-data-final2_archive2.zip"
 
@@ -64,7 +67,7 @@ def annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-da
     model2, tokenizer2 = load_model_from_zip(model2_zip_file, 2)
 
     # Chargez le DataFrame d'entrée
-    df = pd.read_csv(input_csv_df_mefsin, delimiter=';')
+    df = pd.read_csv(input_csv_df_mefsin, delimiter=',')
 
     # Effectuez l'inférence avec le modèle 1
     predictions_model1 = perform_inference(model1, tokenizer1, df)
@@ -110,7 +113,7 @@ def annotate_a_message(title, message):
     return prediction_motif, prediction_sous_motif
 
 
-#annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-data-discussions/dataset.csv", output_csv_file_model="test.csv")
+#annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-data-discussions/app/static/data/data_gouv_discussions.csv")
 
 #prediction_motif, prediction_sous_motif = annotate_a_message("Problème d'accès aux données", "Bonjour, j'essaye d'accéder aux données mais je n'y arrive pas. Merci de m'aider. Cordialement.")
 #print("Catégorie prédite:", prediction_motif)

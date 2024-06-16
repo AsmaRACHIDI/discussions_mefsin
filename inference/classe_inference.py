@@ -109,7 +109,7 @@ if __name__ == "__main__":
     inference.load_model_from_zip(model2_zip_file)
 
     # Chargez le DataFrame d'entrée
-    df = pd.read_csv(input_csv_df_mefsin, delimiter=';')
+    df = pd.read_csv(input_csv_df_mefsin, delimiter=',')
 
     # Effectuez l'inférence avec le modèle 1
     predictions_model1 = inference.perform_inference(df)
