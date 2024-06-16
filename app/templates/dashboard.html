@@ -10,7 +10,7 @@
     <section class="dashboard">
         <div class="text">Présentation des données annotées par le modèle d'IA</div>
         <div class="table-container">      
-            <div id="treemap"></div>
+            <div id="treemap" class="graph-container"></div>
             <script>
                 // Charger les données CSV à partir d'un répertoire externe
                 d3.csv("/static/data/models_predicted_data.csv").then(function(data) {
@@ -56,7 +56,11 @@
                         labels: labels,
                         parents: parents,
                         values: values,
-                        textinfo: 'label+value'
+                        textinfo: 'label+value',
+                        // textfont: {
+                        //     size: 14,
+                        //     color: 'white'
+                        // }
                     }];
 
                     var layout = {
@@ -78,22 +82,74 @@
                             height: window.innerHeight * 0.8 // Mettre à jour la hauteur en fonction de la fenêtre
                         });
                     });
+
+                // BAR-CHART //
+                var problemCounts = {};
+
+                data.forEach(function(d) {
+                    var problem = d["prediction_sous_motif"];
+                    problemCounts[problem] = (problemCounts[problem] || 0) + 1;
+                });
+
+                var sortedProblems = Object.keys(problemCounts).sort(function(a, b) {
+                    return problemCounts[b] - problemCounts[a];
+                });
+
+                var topProblems = sortedProblems.slice(0, 10);
+                var topCounts = topProblems.map(function(problem) {
+                    return problemCounts[problem];
+                });
+
+                var barData = [{
+                    type: 'bar',
+                    x: topCounts.reverse(),
+                    y: topProblems.reverse(),
+                    orientation: 'h'
+                }];
+
+                var barLayout = {
+                    title: {
+                        text: "Top 10 des problèmes rencontrés par les utilisateurs",
+                        x: 0.5,
+                        xanchor: 'center'
+                    },
+                    margin: { t: 100, l: 250, r: 20 }, // Ajouter une marge gauche pour les étiquettes
+                    height: topProblems.length * 50 + 100, // Dynamically set height based on number of bars and increase bar height
+                    yaxis: {
+                        tickprefix: '  ', // Add space before the labels
+                        ticksuffix: '  ', // Add space after the labels
+                        automargin: true // Automatically adjust margin for y-axis labels
+                    }
+                };
+
+                Plotly.newPlot('bar-chart', barData, barLayout);
+
+                // Fonction pour redimensionner le bar-chart en réponse à un redimensionnement de la fenêtre
+                window.addEventListener('resize', function() {
+                    Plotly.relayout('bar-chart', {
+                        width: document.getElementById('bar-chart').offsetWidth, // Utiliser la largeur de l'élément parent
+                        height: topProblems.length * 50 + 100 // Mettre à jour la hauteur en fonction de la fenêtre
+                    });
+                });
                 }).catch(function(error) {
-                    console.log(error); // Gérer les éventuelles erreurs de chargement du fichier CSV
+                console.log(error); // Gérer les éventuelles erreurs de chargement du fichier CSV
                 });
             </script>
 
+            <!-- BAR-CHART -->
+            <div id="bar-chart" class="graph-container"></div>
+
             <!-- Circle Packing -->
-            <div id="circle-packing"></div>
+            <!-- <div id="circle-packing" class="graph-container"></div> -->
             <!-- <div class="text">Proportion des jeux de données les plus discutés</div> -->
-            <script>
+            <!-- <script>
                 d3.csv("/static/data/models_predicted_data.csv").then(function(data) {
                     // Votre code pour créer le graphique Circle Packing ici
                     // Assurez-vous d'adapter le code pour créer le graphique Circle Packing avec D3.js
                 }).catch(function(error) {
                     console.log(error); // Gérer les éventuelles erreurs de chargement du fichier CSV
                 });
-            </script>
+            </script> -->
         </div>
     </section>
 {% endblock %}
