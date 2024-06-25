@@ -4,7 +4,7 @@ import csv
 import json
 
 from dotenv import load_dotenv
-from fetch_data import fetch_discussions_from_data_gouv_api, fetch_datasets_from_data_gouv_api, fetch_datasets_from_data_eco_api, fetch_discussions_from_data_eco_api, format_data, save_to_csv
+from src.fetch_data import fetch_discussions_from_data_gouv_api, fetch_datasets_from_data_gouv_api, fetch_datasets_from_data_eco_api, fetch_discussions_from_data_eco_api, format_data, save_to_csv
 
 # Récupération des variables d'environnement
 load_dotenv()

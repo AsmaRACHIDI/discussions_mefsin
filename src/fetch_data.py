@@ -6,7 +6,7 @@ import logging
 import click
 from typing import List, Dict, Optional
 from dotenv import load_dotenv
-from format import dump_json
+from src.format import dump_json
 
 load_dotenv()
 
