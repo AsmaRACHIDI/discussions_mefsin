@@ -1,7 +1,7 @@
 # Open Thread CategorIA
 
 _Tableau de bord d'annotation des discussions autour des jeux de données du Ministère de l'économie et des
-finances (data.gouv.fr et data.economie.gouv.fr)_
+finances (data.gouv.fr)_
 
 ## Description du projet
 
@@ -35,11 +35,22 @@ Le dashboard quant à lui est développé avec Dash plotly.
 
 ### Applications :
 
+Les applications suivent la même arborescence :
 
+- `exceptions` : les exceptions métier levées par les différents cas d'usage.
+- `gateways` : les contrats (sous forme d'Abstract Base Class en Python) passés avec les dépendances.
+- `infrastructure` : les repositories, qui héritent des contrats définis dans `gateways`
+- `models` : les objets de base (écrits en Python) qui circulent entre les couches.
+- `usecases` : fonctions utilisées par les `entrypoints` qui permettent de traiter les cas d'usage
 
 ## Installation
 
+Modifiez le contenu des variables d'environnement selon vos usages.
 
+```
+$ cp .env.sampla .env
+$ make install
+```
 
 ## Instructions d'Utilisation
 
@@ -72,8 +83,6 @@ $ python commands.py
 
 Pré-requis : avoir installé Docker et docker-compose.
 Les commandes liées sont dans le fichier `Makefile`.
-
-
 
 
 Créer un dossier data dans app/static/
