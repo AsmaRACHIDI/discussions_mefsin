@@ -162,7 +162,7 @@ def format_data(data_json: List[Dict], api_type: str) -> List[Dict]:
     if api_type == "data_gouv_discussions":
         for discussion in data_json:
             formatted_discussion = {
-                "id": discussion["id"],
+                "id_discussion": discussion["id"],
                 "created": discussion["created"],
                 "closed": discussion["closed"],
                 "dataset_id": discussion["subject"]["id"],
@@ -176,7 +176,7 @@ def format_data(data_json: List[Dict], api_type: str) -> List[Dict]:
     elif api_type == "data_gouv_datasets":
         formatted_data = [
             {
-                "dataset_id": dataset["id"],
+                "id_dataset": dataset["id"],
                 "slug": dataset["slug"],
                 "title": dataset["title"],
                 "url": dataset["page"],
@@ -202,7 +202,7 @@ def format_data(data_json: List[Dict], api_type: str) -> List[Dict]:
     elif api_type == "data_eco_datasets":
         formatted_data = [
             {
-                "id": dataset["dataset_id"],
+                "id_dataset": dataset["dataset_id"],
                 "title": dataset["metas"]["default"]["title"],
                 "publisher": dataset["metas"]["default"]["publisher"],
                 "created_at": dataset["metas"]["dcat"]["created"],
