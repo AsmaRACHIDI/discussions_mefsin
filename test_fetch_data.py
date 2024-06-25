@@ -18,9 +18,8 @@ def load_sample_data(filepath, fixture_name):
     if 'records' in data:
         sample_data = data['records'][:2]  # Récupère les deux premiers éléments de la liste 'records'
     else:
-        sample_data = data[:2]  # Récupère les deux premiers éléments de la liste pour le sample data
+        sample_data = data[:2]
 
-    # Enregistrer les données d'échantillon dans le dossier fixtures
     fixture_path = os.path.join('fixtures', f'{fixture_name}.json')
     with open(fixture_path, 'w', encoding='utf-8') as f:
         json.dump(sample_data, f, indent=4, ensure_ascii=False)
@@ -28,8 +27,6 @@ def load_sample_data(filepath, fixture_name):
     return sample_data
 
 
-# def test_fetch_data_from_data_gouv_api(data_gouv_api_url):
-    # data = fetch_data_from_data_gouv_api(data_gouv_api_url)
 def test_fetch_discussions_from_data_gouv_api():
     data = fetch_discussions_from_data_gouv_api()
     assert isinstance(data, list)
