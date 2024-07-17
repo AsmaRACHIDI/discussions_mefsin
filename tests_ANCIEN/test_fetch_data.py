@@ -92,9 +92,9 @@ def test_format_data_eco_discussions():
     assert isinstance(formatted_data, list)
     assert len(formatted_data) == len(sample_data)
     for discussion in formatted_data:
-        assert "id_jdd" in discussion
-        assert "id_message" in discussion
-        assert "id_parent_message" in discussion
+        assert "jdd_id" in discussion
+        assert "message_id" in discussion
+        assert "parent_message_id" in discussion
         assert "title" in discussion
         assert "pseudo" in discussion
         assert "comment" in discussion
