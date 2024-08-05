@@ -1,13 +1,16 @@
-# api/fetch_data.py
 import requests
 import logging
+import os
 from abc import ABC, abstractmethod
 from typing import List, Dict, Optional
 from core.config import Config
-
+import json
 
 HEADERS = {"Authorization": f"Apikey {Config.API_KEY}"}
 
+# Create directories for unformatted and formatted data if they don't exist
+os.makedirs('tests/fixtures/unformatted_data', exist_ok=True)
+os.makedirs('tests/fixtures/formatted_data', exist_ok=True)
 
 class BaseFetcher(ABC):
     def __init__(self, discussions_url: str, datasets_url: str):
@@ -33,12 +36,24 @@ class BaseFetcher(ABC):
 
 class DataGouvFetcher(BaseFetcher):
     def fetch_discussions(self) -> Optional[List[Dict]]:
+        #logging.info("Fetching discussions from data.gouv.fr API :")
         try:
             response = requests.get(self.discussions_url)
             response.raise_for_status()
             data_json = response.json()
-            logging.info("Discussions from data.gouv.fr fetched successfully!")
-            return self.format_discussions(data_json)
+            #logging.info(f"Fetched {len(data_json)} discussions from data.gouv.fr")
+
+            # Write raw unformatted data
+            with open('tests/fixtures/unformatted_data/unformatted_discussions_data_gouv.json', 'w', encoding='utf-8') as f:
+                json.dump(data_json, f, indent=4, ensure_ascii=False)
+
+            formatted_discussions = self.format_discussions(data_json)
+            
+            # Write formatted data
+            with open('tests/fixtures/formatted_data/formatted_discussions_data_gouv.json', 'w', encoding='utf-8') as f:
+                json.dump(formatted_discussions, f, indent=4, ensure_ascii=False)
+            
+            return formatted_discussions
         except requests.RequestException as e:
             logging.error(f"Request error: {e}")
             return None
@@ -60,18 +75,36 @@ class DataGouvFetcher(BaseFetcher):
         return formatted_discussions
 
     def fetch_datasets(self) -> Optional[List[Dict]]:
+        #logging.info("Fetching datasets from data.gouv.fr API :")
         datasets = []
         page = 1
-        while True:
-            url = f"{self.datasets_url}?page={page}"
-            response = requests.get(url)
-            response.raise_for_status()
-            data = response.json()
-            if not data["data"]:
-                break
-            datasets.extend(data["data"])
-            page += 1
-        return self.format_datasets(datasets)
+        try:
+            while True:
+                url = f"{self.datasets_url}?page={page}"
+                response = requests.get(url)
+                #ON vérifie d'abord l'existence de la page ou l présence de données dans la page avant de lancer la récupération
+                if response.status_code == 404 or not response.json().get("data"):
+                    break
+                response.raise_for_status()
+                data = response.json()
+                datasets.extend(data["data"])
+                page += 1
+            #logging.info(f"Fetched {len(datasets)} datasets from data.gouv.fr")
+
+            # Write raw unformatted data
+            with open('tests/fixtures/unformatted_data/unformatted_datasets_data_gouv.json', 'w', encoding='utf-8') as f:
+                json.dump(datasets, f, indent=4, ensure_ascii=False)
+
+            formatted_datasets = self.format_datasets(datasets)
+            
+            # Write formatted data
+            with open('tests/fixtures/formatted_data/formatted_datasets_data_gouv.json', 'w', encoding='utf-8') as f:
+                json.dump(formatted_datasets, f, indent=4, ensure_ascii=False)
+            
+            return formatted_datasets
+        except requests.RequestException as e:
+            logging.error(f"Request error while fetching datasets: {e}")
+            return None
 
     def format_datasets(self, datasets: List[Dict]) -> List[Dict]:
         formatted_datasets = []
@@ -81,31 +114,53 @@ class DataGouvFetcher(BaseFetcher):
                 "slug": dataset["slug"],
                 "title": dataset["title"],
                 "url": dataset["page"],
-                "source": "data_gouv",
-                "publisher": dataset.get("publisher", "Unknown"),
                 "created_at": dataset.get("created_at", ""),
-                "updated_at": dataset.get("updated_at", "")
+                "updated_at": dataset.get("last_update", ""),
+                "discussions": dataset["metrics"]["discussions"],
+                "followers": dataset["metrics"]["followers"],
+                "resources_downloads": dataset["metrics"]["resources_downloads"],
+                "reuses": dataset["metrics"]["reuses"],
+                "views": dataset["metrics"]["views"],
+                "source": "data_gouv"
             }
             formatted_datasets.append(formatted_dataset)
         return formatted_datasets
 
 class DataEcoFetcher(BaseFetcher):
     def fetch_discussions(self) -> Optional[List[Dict]]:
+        #logging.info("Fetching discussions from data.economie.gouv.fr API")
         all_data = []
-        limit = 100
-        offset = 0
+        params = {
+            "timezone": "UTC",
+            "include_links": "false",
+            "include_app_metas": "false",
+            "limit": 100,
+            "offset": 0
+        }
         try:
             while True:
-                response = requests.get(self.discussions_url, headers=HEADERS, params={"limit": limit, "offset": offset})
+                response = requests.get(self.discussions_url, headers=HEADERS, params=params)
                 response.raise_for_status()
                 data_json = response.json()
                 all_data.extend(data_json['results'])
-                if len(data_json['results']) < limit:
+                if len(data_json['results']) < params["limit"]:
                     break
-                offset += limit
-            return self.format_discussions(all_data)
+                params["offset"] += params["limit"]
+            #logging.info(f"Fetched {len(all_data)} discussions from DataEco")
+
+            # Write raw unformatted data
+            with open('tests/fixtures/unformatted_data/unformatted_discussions_data_eco.json', 'w', encoding='utf-8') as f:
+                json.dump(all_data, f, indent=4, ensure_ascii=False)
+
+            formatted_discussions = self.format_discussions(all_data)
+            
+            # Write formatted data
+            with open('tests/fixtures/formatted_data/formatted_discussions_data_eco.json', 'w', encoding='utf-8') as f:
+                json.dump(formatted_discussions, f, indent=4, ensure_ascii=False)
+            
+            return formatted_discussions
         except requests.RequestException as e:
-            logging.error(f"HTTP error occurred: {e}")
+            logging.error(f"Error fetching discussions: {e}")
             return None
 
     def format_discussions(self, discussions: List[Dict]) -> List[Dict]:
@@ -126,6 +181,7 @@ class DataEcoFetcher(BaseFetcher):
         return formatted_discussions
 
     def fetch_datasets(self) -> Optional[List[Dict]]:
+        #logging.info("Fetching datasets from data.economie.gouv.fr API")
         all_data = []
         params = {
             "timezone": "UTC",
@@ -143,7 +199,20 @@ class DataEcoFetcher(BaseFetcher):
                 if len(data["results"]) < 100:
                     break
                 params["offset"] += 100
-            return self.format_datasets(all_data)
+            #logging.info(f"Fetched {len(all_data)} datasets from DataEco")
+
+            # Write raw unformatted data
+            with open('tests/fixtures/unformatted_data/unformatted_datasets_data_eco.json', 'w', encoding='utf-8') as f:
+                json.dump(all_data, f, indent=4, ensure_ascii=False)
+
+            formatted_datasets = self.format_datasets(all_data)
+            
+            # Write formatted data
+            with open('tests/fixtures/formatted_data/formatted_datasets_data_eco.json', 'w', encoding='utf-8') as f:
+                json.dump(formatted_datasets, f, indent=4, ensure_ascii=False)
+            
+            return formatted_datasets
+        
         except requests.RequestException as e:
             logging.error(f"Error fetching datasets: {e}")
             return None
@@ -151,12 +220,15 @@ class DataEcoFetcher(BaseFetcher):
     def format_datasets(self, datasets: List[Dict]) -> List[Dict]:
         formatted_datasets = []
         for dataset in datasets:
+            metas_default = dataset.get("metas", {}).get("default", {})
+            metas_dcat = dataset.get("metas", {}).get("dcat", {})
+            
             formatted_dataset = {
-                "dataset_id": dataset["dataset_id"],
-                "title": dataset["metas"]["default"]["title"],
-                "publisher": dataset["metas"]["default"]["publisher"],
-                "created_at": dataset["metas"]["dcat"]["created"],
-                "updated_at": dataset["metas"]["default"]["modified"],
+                "dataset_id": dataset.get("dataset_id"),
+                "title": metas_default.get("title", "Unknown Title"),
+                "publisher": metas_default.get("publisher", "Unknown Publisher"),
+                "created_at": metas_dcat.get("created", "Unknown Created Date"),
+                "updated_at": metas_default.get("modified", "Unknown Modified Date"),
                 "source": "data_eco"
             }
             formatted_datasets.append(formatted_dataset)
