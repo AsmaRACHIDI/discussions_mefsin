@@ -1,5 +1,5 @@
 # update_data.py
-from infrastructure.repositories.tinydb_discussions_repository import TinyDBCommentRepository
+from infrastructure.repositories.tinydb_comment_repository import TinyDBCommentRepository
 from domain.usecases import FetchAndStoreDiscussions
 
 repository = TinyDBCommentRepository()
