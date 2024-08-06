@@ -1,25 +1,34 @@
-from typing import Dict
 from domain.models import Message
 from domain.gateways import AbstractCommentRepository
 from infrastructure.services.api_fetcher_manager import APIFetcherManager
-
+from typing import Dict
 
 def create_message(repository: AbstractCommentRepository, discussion: Dict, dataset: Dict) -> Message:
+    discussion_id = discussion.get("discussion_id") or discussion.get("message_id")
+    print(f"Checking for existing message with discussion_id: {discussion_id}")
+    existing_message = repository.get_message_by_sk(discussion_id)
+    
+    if existing_message:
+        print(f"Duplicate message found for discussion_id: {discussion_id}")
+        return existing_message
+    
+    print(f"No existing message found. Creating new message for discussion_id: {discussion_id}")
     message = Message.create(
-        discussion["discussion_id"], 
-        discussion.get("created") or discussion.get("date"), 
-        discussion.get("closed", False), 
-        discussion.get("dataset_id") or discussion.get("jdd_id"), 
-        discussion["title"], 
-        discussion.get("first_message") or discussion.get("comment"), 
-        discussion.get("url_discussion", ""), 
-        discussion["source"],
-        dataset["title"],
-        dataset["publisher"],
-        dataset["created_at"],
-        dataset["updated_at"],
-        dataset["url"]
+        discussion_id,
+        discussion.get("created") or discussion.get("date"),
+        discussion.get("closed", False),
+        discussion.get("dataset_id") or discussion.get("jdd_id"),
+        discussion.get("title", ""),
+        discussion.get("first_message") or discussion.get("comment", ""),
+        discussion.get("url_discussion", ""),
+        discussion.get("source", ""),
+        dataset.get("title", ""),
+        dataset.get("publisher", ""),
+        dataset.get("created_at", ""),
+        dataset.get("updated_at", ""),
+        dataset.get("url", "")
     )
+    
     repository.create_message(message)
     return message
 

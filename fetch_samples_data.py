@@ -6,6 +6,8 @@ from infrastructure.services.api_fetcher_manager import APIFetcherManager
 
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
+os.makedirs('tests/fixtures/samples_data', exist_ok=True)
+
 def save_json(data, filename):
     with open(filename, 'w') as f:
         json.dump(data, f, indent=2)
@@ -26,7 +28,7 @@ def fetch_and_save_samples():
         if data_gouv_discussions:
             sample_data_gouv_discussions = data_gouv_discussions[:2]  # Récupérer les deux premiers échantillons
             logging.info(f"Fetched {len(sample_data_gouv_discussions)} discussions from DataGouv !")
-            save_json(sample_data_gouv_discussions, os.path.join(fixtures_dir, 'sample_data_gouv_discussions.json'))
+            save_json(sample_data_gouv_discussions, os.path.join(fixtures_dir, 'samples_data/sample_data_gouv_discussions.json'))
         else:
             logging.warning("No discussions fetched from DataGouv")
 
@@ -35,7 +37,7 @@ def fetch_and_save_samples():
         if data_gouv_datasets:
             sample_data_gouv_datasets = data_gouv_datasets[:2]  # Récupérer les deux premiers échantillons
             logging.info(f"Fetched {len(sample_data_gouv_datasets)} datasets from DataGouv !")
-            save_json(sample_data_gouv_datasets, os.path.join(fixtures_dir, 'sample_data_gouv_datasets.json'))
+            save_json(sample_data_gouv_datasets, os.path.join(fixtures_dir, 'samples_data/sample_data_gouv_datasets.json'))
         else:
             logging.warning("No datasets fetched from DataGouv")
 
@@ -46,7 +48,7 @@ def fetch_and_save_samples():
         if data_eco_discussions:
             sample_data_eco_discussions = data_eco_discussions[:2]  # Récupérer les deux premiers échantillons
             logging.info(f"Fetched {len(sample_data_eco_discussions)} discussions from DataEco !")
-            save_json(sample_data_eco_discussions, os.path.join(fixtures_dir, 'sample_data_eco_discussions.json'))
+            save_json(sample_data_eco_discussions, os.path.join(fixtures_dir, 'samples_data/sample_data_eco_discussions.json'))
         else:
             logging.warning("No discussions fetched from DataEco")
 
@@ -55,7 +57,7 @@ def fetch_and_save_samples():
         if data_eco_datasets:
             sample_data_eco_datasets = data_eco_datasets[:2]  # Récupérer les deux premiers échantillons
             logging.info(f"Fetched {len(sample_data_eco_datasets)} datasets from DataEco !")
-            save_json(sample_data_eco_datasets, os.path.join(fixtures_dir, 'sample_data_eco_datasets.json'))
+            save_json(sample_data_eco_datasets, os.path.join(fixtures_dir, 'samples_data/sample_data_eco_datasets.json'))
         else:
             logging.warning("No datasets fetched from DataEco")
 
