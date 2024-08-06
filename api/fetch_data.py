@@ -168,8 +168,8 @@ class DataEcoFetcher(BaseFetcher):
         for discussion in discussions:
             formatted_discussion = {
                 "jdd_id": discussion["id_jdd"],
-                "message_id": discussion["id"],
-                "parent_message_id": discussion["id_parent"],
+                "discussion_id": discussion["id"],
+                "parent_discussion_id": discussion["id_parent"],
                 "title": discussion["sujet"],
                 "pseudo": discussion["pseudo"],
                 "comment": discussion["commentaire"],
