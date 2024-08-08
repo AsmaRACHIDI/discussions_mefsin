@@ -14,7 +14,7 @@ class TinyDBCommentRepository(AbstractCommentRepository):
         result = self.messages_table.get(MessageQuery.discussion_id == discussion_id)
         return Message(**result) if result else None
 
-    def create_message(self, message: Message) -> None:
+    def add_message(self, message: Message) -> None:
         if not self.get_message_by_sk(message.discussion_id):
             self.messages_table.insert(message.__dict__)
         else:
