@@ -29,7 +29,7 @@ def create_message(repository: AbstractCommentRepository, discussion: Dict, data
         dataset.get("url", "")
     )
     
-    repository.create_message(message)
+    repository.add_message(message)
     return message
 
 class FetchAndStoreDiscussions:

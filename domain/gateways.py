@@ -8,7 +8,7 @@ class AbstractCommentRepository(abc.ABC):
         pass
 
     @abc.abstractmethod
-    def create_message(self, message: Message) -> None:
+    def add_message(self, message: Message) -> None:
         pass
 
     @abc.abstractmethod
