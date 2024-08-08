@@ -1,5 +1,7 @@
 import pytest
 import json
+import os
+from core.config import Config
 from tinydb import TinyDB
 from tinydb.storages import MemoryStorage
 from domain.models import Message
@@ -14,7 +16,10 @@ def tinydb_repository():
     repository.db = db
     repository.clear_db()  # Clear the database before each test
     # Chaque test appelle cette méthode pour s'assurer que la base de données est vide avant l'exécution du test.
-    return repository
+    yield repository # l'argument "yield" permet au lieu de return d'executer du code après que le test soit terminé
+    repository.clear_db()  # Clear the database after each test
+    if os.path.exists(Config.TINYDB_PATH):
+        os.remove(Config.TINYDB_PATH)  # Remove the JSON file after each test
 
 def load_json_fixture(filename):
     with open(filename, 'r') as f:
@@ -71,20 +76,21 @@ def test_create_message_data_eco(tinydb_repository, sample_discussions_data_eco:
     assert tinydb_repository.get_message_by_sk(sample_discussion.get('discussion_id') or sample_discussion.get('message_id')) is not None
 
 def test_get_message_by_id(tinydb_repository, sample_message):
-    tinydb_repository.create_message(sample_message)
+    #create_message(tinydb_repository, sample_message.__dict__, sample_message.__dict__)
+    tinydb_repository.add_message(sample_message)
     retrieved_message = tinydb_repository.get_message_by_sk("sample_discussion")
     assert retrieved_message is not None
     assert retrieved_message.discussion_id == "sample_discussion"
     assert retrieved_message.title == "Sample Title"
 
 def test_get_message(tinydb_repository, sample_message: Message):
-    tinydb_repository.create_message(sample_message)
+    tinydb_repository.add_message(sample_message)
     retrieved_message = tinydb_repository.get_message_by_sk(sample_message.discussion_id)
     assert retrieved_message is not None
     assert retrieved_message.discussion_id == sample_message.discussion_id
 
 def test_update_message(tinydb_repository, sample_message: Message):
-    tinydb_repository.create_message(sample_message)
+    tinydb_repository.add_message(sample_message)
     updated_fields = {"first_message": "Updated message content"}
     tinydb_repository.update_message(sample_message.discussion_id, updated_fields)
     retrieved_message = tinydb_repository.get_message_by_sk(sample_message.discussion_id)
@@ -92,7 +98,7 @@ def test_update_message(tinydb_repository, sample_message: Message):
     assert retrieved_message.first_message == "Updated message content"
 
 def test_delete_message(tinydb_repository, sample_message):
-    tinydb_repository.create_message(sample_message)
+    tinydb_repository.add_message(sample_message)
     tinydb_repository.delete_message(sample_message.discussion_id)
     assert tinydb_repository.get_message_by_sk(sample_message.discussion_id) is None
 
