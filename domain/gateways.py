@@ -1,5 +1,5 @@
 import abc
-from typing import List
+from typing import List, Dict, Optional
 from domain.models import Message
 
 class AbstractCommentRepository(abc.ABC):
@@ -21,4 +21,26 @@ class AbstractCommentRepository(abc.ABC):
 
     @abc.abstractmethod
     def get_all_messages(self) -> List[Message]:
+        pass
+
+
+class BaseFetcher(abc.ABC):
+    def __init__(self, discussions_url: str, datasets_url: str):
+        self.discussions_url = discussions_url
+        self.datasets_url = datasets_url
+
+    @abc.abstractmethod
+    def fetch_discussions(self) -> Optional[List[Dict]]:
+        pass
+
+    @abc.abstractmethod
+    def fetch_datasets(self) -> Optional[List[Dict]]:
+        pass
+
+    @abc.abstractmethod
+    def format_discussions(self, discussions: List[Dict]) -> List[Dict]:
+        pass
+
+    @abc.abstractmethod
+    def format_datasets(self, datasets: List[Dict]) -> List[Dict]:
         pass
