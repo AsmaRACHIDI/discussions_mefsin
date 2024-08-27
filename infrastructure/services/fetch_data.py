@@ -8,29 +8,32 @@ import json
 
 HEADERS = {"Authorization": f"Apikey {Config.API_KEY}"}
 
-# Create directories for unformatted and formatted data if they don't exist
-os.makedirs('tests/fixtures/unformatted_data', exist_ok=True)
-os.makedirs('tests/fixtures/formatted_data', exist_ok=True)
+UNFORMATTED_DATA_DIR = 'tests/fixtures/unformatted_data'
+FORMATTED_DATA_DIR = 'tests/fixtures/formatted_data'
 
+# Création des répertoires s'ils n'existent pas
+os.makedirs(UNFORMATTED_DATA_DIR, exist_ok=True)
+os.makedirs(FORMATTED_DATA_DIR, exist_ok=True)
+
+# Configuration de la journalisation
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 class DataGouvFetcher(BaseFetcher):
     def fetch_discussions(self) -> Optional[List[Dict]]:
-        #logging.info("Fetching discussions from data.gouv.fr API :")
+        logging.info("Fetching discussions from data.gouv.fr API :")
         try:
             response = requests.get(self.discussions_url)
             response.raise_for_status()
             data_json = response.json()
-            #logging.info(f"Fetched {len(data_json)} discussions from data.gouv.fr")
+            logging.info(f"Fetched {len(data_json)} discussions from data.gouv.fr")
 
-            # Write raw unformatted data
-            with open('tests/fixtures/unformatted_data/unformatted_discussions_data_gouv.json', 'w', encoding='utf-8') as f:
-                json.dump(data_json, f, indent=4, ensure_ascii=False)
+            # Enregistrement des données non formatées
+            self.save_json(data_json, f'{UNFORMATTED_DATA_DIR}/unformatted_data_gouv_discussions.json')
 
             formatted_discussions = self.format_discussions(data_json)
-            
-            # Write formatted data
-            with open('tests/fixtures/formatted_data/formatted_discussions_data_gouv.json', 'w', encoding='utf-8') as f:
-                json.dump(formatted_discussions, f, indent=4, ensure_ascii=False)
+
+            # Enregistrement des données formatées
+            self.save_json(formatted_discussions, f'{FORMATTED_DATA_DIR}/formatted_data_gouv_discussions.json')
             
             return formatted_discussions
         except requests.RequestException as e:
@@ -54,31 +57,29 @@ class DataGouvFetcher(BaseFetcher):
         return formatted_discussions
 
     def fetch_datasets(self) -> Optional[List[Dict]]:
-        #logging.info("Fetching datasets from data.gouv.fr API :")
+        logging.info("Fetching datasets from data.gouv.fr API :")
         datasets = []
         page = 1
         try:
             while True:
                 url = f"{self.datasets_url}?page={page}"
                 response = requests.get(url)
-                # On vérifie d'abord l'existence de la page ou l présence de données dans la page avant de lancer la récupération
+                # On vérifie d'abord l'existence de la page ou la présence de données dans la page avant de lancer la récupération
                 if response.status_code == 404 or not response.json().get("data"):
                     break
                 response.raise_for_status()
                 data = response.json()
                 datasets.extend(data["data"])
                 page += 1
-            #logging.info(f"Fetched {len(datasets)} datasets from data.gouv.fr")
+            logging.info(f"Fetched {len(datasets)} datasets from data.gouv.fr")
 
-            # Write raw unformatted data
-            with open('tests/fixtures/unformatted_data/unformatted_datasets_data_gouv.json', 'w', encoding='utf-8') as f:
-                json.dump(datasets, f, indent=4, ensure_ascii=False)
+            # Enregistrement des données non formatées
+            self.save_json(datasets, f'{UNFORMATTED_DATA_DIR}/unformatted_data_gouv_datasets.json')
 
             formatted_datasets = self.format_datasets(datasets)
             
-            # Write formatted data
-            with open('tests/fixtures/formatted_data/formatted_datasets_data_gouv.json', 'w', encoding='utf-8') as f:
-                json.dump(formatted_datasets, f, indent=4, ensure_ascii=False)
+            # Enregistrement des données formatées
+            self.save_json(formatted_datasets, f'{FORMATTED_DATA_DIR}/formatted_data_gouv_datasets.json')
             
             return formatted_datasets
         except requests.RequestException as e:
@@ -108,7 +109,7 @@ class DataGouvFetcher(BaseFetcher):
 
 class DataEcoFetcher(BaseFetcher):
     def fetch_discussions(self) -> Optional[List[Dict]]:
-        #logging.info("Fetching discussions from data.economie.gouv.fr API")
+        logging.info("Fetching discussions from data.economie.gouv.fr API :")
         all_data = []
         params = {
             "timezone": "UTC",
@@ -126,17 +127,15 @@ class DataEcoFetcher(BaseFetcher):
                 if len(data_json['results']) < params["limit"]:
                     break
                 params["offset"] += params["limit"]
-            #logging.info(f"Fetched {len(all_data)} discussions from DataEco")
+            logging.info(f"Fetched {len(all_data)} discussions from DataEco")
 
-            # Write raw unformatted data
-            with open('tests/fixtures/unformatted_data/unformatted_discussions_data_eco.json', 'w', encoding='utf-8') as f:
-                json.dump(all_data, f, indent=4, ensure_ascii=False)
+            # Enregistrement des données non formatées
+            self.save_json(all_data, f'{UNFORMATTED_DATA_DIR}/unformatted_data_eco_discussions.json')
 
             formatted_discussions = self.format_discussions(all_data)
             
-            # Write formatted data
-            with open('tests/fixtures/formatted_data/formatted_discussions_data_eco.json', 'w', encoding='utf-8') as f:
-                json.dump(formatted_discussions, f, indent=4, ensure_ascii=False)
+            # Enregistrement des données formatées
+            self.save_json(formatted_discussions, f'{FORMATTED_DATA_DIR}/formatted_data_eco_discussions.json')
             
             return formatted_discussions
         except requests.RequestException as e:
@@ -153,7 +152,7 @@ class DataEcoFetcher(BaseFetcher):
                 "title": discussion["sujet"],
                 "pseudo": discussion["pseudo"],
                 "comment": discussion["commentaire"],
-                "date": discussion["horodatage"],
+                "created": discussion["horodatage"],
                 "username": discussion["username"],
                 "source": "data_eco"
             }
@@ -161,7 +160,7 @@ class DataEcoFetcher(BaseFetcher):
         return formatted_discussions
 
     def fetch_datasets(self) -> Optional[List[Dict]]:
-        #logging.info("Fetching datasets from data.economie.gouv.fr API")
+        logging.info("Fetching datasets from data.economie.gouv.fr API :")
         all_data = []
         params = {
             "timezone": "UTC",
@@ -179,18 +178,16 @@ class DataEcoFetcher(BaseFetcher):
                 if len(data["results"]) < 100:
                     break
                 params["offset"] += 100
-            #logging.info(f"Fetched {len(all_data)} datasets from DataEco")
+            logging.info(f"Fetched {len(all_data)} datasets from DataEco")
 
-            # Write raw unformatted data
-            with open('tests/fixtures/unformatted_data/unformatted_datasets_data_eco.json', 'w', encoding='utf-8') as f:
-                json.dump(all_data, f, indent=4, ensure_ascii=False)
+            # Enregistrement des données non formatées
+            self.save_json(all_data, f'{UNFORMATTED_DATA_DIR}/unformatted_data_eco_datasets.json')
 
             formatted_datasets = self.format_datasets(all_data)
             
-            # Write formatted data
-            with open('tests/fixtures/formatted_data/formatted_datasets_data_eco.json', 'w', encoding='utf-8') as f:
-                json.dump(formatted_datasets, f, indent=4, ensure_ascii=False)
-            
+            # Enregistrement des données formatées
+            self.save_json(formatted_datasets, f'{FORMATTED_DATA_DIR}/formatted_data_eco_datasets.json')
+
             return formatted_datasets
         
         except requests.RequestException as e:
