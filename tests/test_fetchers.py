@@ -15,36 +15,36 @@ def fetcher_data_eco():
 # Unformatted_data
 @pytest.fixture
 def unformatted_datasets_data_gouv():
-    return load_json_fixture('tests/fixtures/unformatted_data/unformatted_datasets_data_gouv.json')
+    return load_json_fixture('tests/fixtures/unformatted_data/unformatted_data_gouv_datasets.json')
 
 @pytest.fixture
 def unformatted_discussions_data_gouv():
-    return load_json_fixture('tests/fixtures/unformatted_data/unformatted_discussions_data_gouv.json')
+    return load_json_fixture('tests/fixtures/unformatted_data/unformatted_data_gouv_discussions.json')
 
 @pytest.fixture
 def unformatted_datasets_data_eco():
-    return load_json_fixture('tests/fixtures/unformatted_data/unformatted_datasets_data_eco.json')
+    return load_json_fixture('tests/fixtures/unformatted_data/unformatted_data_eco_datasets.json')
 
 @pytest.fixture
 def unformatted_discussions_data_eco():
-    return load_json_fixture('tests/fixtures/unformatted_data/unformatted_discussions_data_eco.json')
+    return load_json_fixture('tests/fixtures/unformatted_data/unformatted_data_eco_discussions.json')
 
 # Formatted_data
 @pytest.fixture
 def formatted_datasets_data_gouv():
-    return load_json_fixture('tests/fixtures/formatted_data/formatted_datasets_data_gouv.json')
+    return load_json_fixture('tests/fixtures/formatted_data/formatted_data_gouv_datasets.json')
 
 @pytest.fixture
 def formatted_discussions_data_gouv():
-    return load_json_fixture('tests/fixtures/formatted_data/formatted_discussions_data_gouv.json')
+    return load_json_fixture('tests/fixtures/formatted_data/formatted_data_gouv_discussions.json')
 
 @pytest.fixture
 def formatted_datasets_data_eco():
-    return load_json_fixture('tests/fixtures/formatted_data/formatted_datasets_data_eco.json')
+    return load_json_fixture('tests/fixtures/formatted_data/formatted_data_eco_datasets.json')
 
 @pytest.fixture
 def formatted_discussions_data_eco():
-    return load_json_fixture('tests/fixtures/formatted_data/formatted_discussions_data_eco.json')
+    return load_json_fixture('tests/fixtures/formatted_data/formatted_data_eco_discussions.json')
 
 
 def load_json_fixture(filename):
