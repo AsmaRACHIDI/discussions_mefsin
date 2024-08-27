@@ -12,21 +12,34 @@ def create_message(repository: AbstractCommentRepository, discussion: Dict, data
         print(f"Duplicate message found for discussion_id: {discussion_id}")
         return existing_message
     
-    print(f"No existing message found. Creating new message for discussion_id: {discussion_id}")
+    # Récupération du titre du message
+    title = discussion.get("title", "")
+    parent_discussion_id = discussion.get("id_parent")
+    
+    # Si le titre est manquant et qu'un parent_discussion_id est fourni
+    if not title and parent_discussion_id:
+        parent_message = repository.get_message_by_sk(parent_discussion_id)
+        if parent_message:
+            title = parent_message.title
+            print(f"Found parent title: {title}")
+        else:
+            print(f"Parent message not found for parent_discussion_id: {parent_discussion_id}")
+    
+    # Création du message
     message = Message.create(
         discussion_id,
         discussion.get("created") or discussion.get("date"),
         discussion.get("closed", False),
         discussion.get("dataset_id") or discussion.get("jdd_id"),
-        discussion.get("title", ""),
+        title,  # Utiliser le titre récupéré ou le titre original
         discussion.get("first_message") or discussion.get("comment", ""),
         discussion.get("url_discussion", ""),
         discussion.get("source", ""),
-        dataset.get("title", ""),
         dataset.get("publisher", ""),
         dataset.get("created_at", ""),
         dataset.get("updated_at", ""),
-        dataset.get("url", "")
+        dataset.get("url", ""),
+        parent_discussion_id  # Passer le parent_discussion_id ici
     )
     
     repository.add_message(message)
