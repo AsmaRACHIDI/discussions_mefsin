@@ -45,53 +45,148 @@ Les applications suivent la même arborescence :
 
 ## Installation
 
-Modifiez le contenu des variables d'environnement selon vos usages.
+1. Modifiez le contenu des variables d'environnement selon vos usages :
 
-```
-$ cp .env.sampla .env
-$ make install
-```
+   ```bash
+   cp .env.sample .env
+   ```
+
+2. Installez les dépendances :
+
+   ```bash
+   make install
+   ```
 
 ## Instructions d'Utilisation
 
-- Installation des Dépendances : Exécuter pip install -r requirements.txt pour installer les librairies requises.
-- Exécution des Scripts : Utiliser les scripts et notebooks dans le dossier src/ pour exécuter différentes parties du
-  projet.
-- Configuration : Modifier le fichier config.json pour ajuster les variables d'environnement au besoin.
+- **Installation des Dépendances** : Exécutez `pip install -r requirements.txt` pour installer les bibliothèques nécessaires.
+- **Exécution des Scripts** : Utilisez les scripts et notebooks dans le dossier `src/` pour exécuter différentes parties du projet.
+- **Configuration** : Modifiez le fichier `config.json` pour ajuster les variables d'environnement si nécessaire.
 
-Remarques :
+**Remarques** :
 
 - Assurez-vous d'avoir les autorisations nécessaires pour accéder aux données et effectuer des requêtes API.
-- Les modèles entraînés sont stockés dans le dossier trained_models/.
-- Les résultats des requêtes API sont disponibles dans le dossier data/raw/data_acquisition/.
+- Les modèles entraînés sont stockés dans le dossier `trained_models/`.
+- Les résultats des requêtes API sont disponibles dans le dossier `data/raw/data_acquisition/`.
 
 ## Usage
 
-Pour lancer le front-end, d'un environnement virtuel :
+### Lancer le Tableau de Bord
 
-```
-$ python app.py
-```
+Pour lancer le front-end (tableau de bord) depuis un environnement virtuel, exécutez :
 
-Pour interagir en lignes de commande :
-
-```
-$ python commands.py
+```bash
+python app.py
 ```
 
-### Dev
+### Lignes de Commande
 
-Pré-requis : avoir installé Docker et docker-compose.
-Les commandes liées sont dans le fichier `Makefile`.
+Pour interagir via la ligne de commande, utilisez :
 
+```bash
+python commands.py
+```
 
-Créer un dossier data dans app/static/
-creer un fichier .env avec KEY= api_key
-créer un environnement virtuel avec virtualenv -p python3.11 venv
-curl -sS https://bootstrap.pypa.io/get-pip.py | python3
+### Développement
 
-récupérer les zip des poids des modèles
+**Pré-requis** : Avoir installé Docker et `docker-compose`. Les commandes associées sont dans le fichier `Makefile`.
 
-Documents/open-data-discussions/trained_models/bert-finetuned-my-data-final_archive.zip
+1. Créez un dossier `data` dans `app/static/`.
+2. Créez un fichier `.env` avec `KEY=api_key`.
+3. Créez un environnement virtuel avec `virtualenv -p python3.11 venv`.
+4. Installez `pip` avec :
 
-pytest -k test_fetch_discussions_from_data_gouv_api
+   ```bash
+   curl -sS https://bootstrap.pypa.io/get-pip.py | python3
+   ```
+
+5. Récupérez les fichiers zip contenant les poids des modèles depuis le dépôt Hugging Face :
+
+   [BercyHub/CamemBERT_classification_discussions](https://huggingface.co/BercyHub/CamemBERT_classification_discussions/tree/main)
+
+6. Exécutez les tests pour vérifier le bon fonctionnement des fetchers avec :
+
+   ```bash
+   pytest -k test_fetch_discussions_from_data_gouv_api
+   ```
+
+## Lancer les Tests
+
+### Tests des Use Cases
+
+Les tests pour les use cases se trouvent dans `tests/test_usecases.py`. Pour les exécuter, utilisez :
+
+```bash
+pytest tests/test_usecases.py
+```
+
+### Tests des Fetchers
+
+Les tests pour les fetchers se trouvent dans `tests/test_fetchers.py`. Pour les exécuter, utilisez :
+
+```bash
+pytest tests/test_fetchers.py
+```
+
+### Ce que Produisent les Tests
+
+Les tests génèrent des fichiers JSON dans les répertoires suivants :
+
+- `tests/fixtures/unformatted_data/` : Contient les données brutes récupérées depuis les APIs.
+- `tests/fixtures/formatted_data/` : Contient les données formatées prêtes à être utilisées par l'application.
+
+## Script de Mise à Jour des Données
+
+### Ce que Fait `update_data.py`
+
+Le script `update_data.py` récupère les dernières données depuis les APIs, les formate et les stocke dans la base de données locale.
+
+### Lancer `update_data.py`
+
+Pour exécuter le script :
+
+```bash
+python update_data.py
+```
+
+## Structure du Projet
+
+```
+├── .gitignore             # Fichier pour spécifier les fichiers/dossiers à ignorer par Git
+├── README.md              # Documentation du projet
+├── requirements.txt       # Liste des dépendances Python requises pour le projet
+├── core/
+│   └── config.py          # Configuration de l'application (API Keys, URLs, etc.)
+├── domain/
+│   ├── gateways.py        # Contient les classes abstraites pour les repositories
+│   ├── models.py          # Contient les modèles de données utilisés dans l'application
+│   └── usecases/          # Contient les cas d'utilisation (logique métier) de l'application (orchestre l'interaction entre les différentes couches du système)
+├── api/
+│   └── fetch_data.py      # Script pour récupérer et formater les données à partir des APIs
+├── scripts/
+│   └── update_data.py     # Script pour récupérer et mettre à jour les données dans la base
+├── inference/
+│   └── model.py           # Contient les scripts pour l'inférence et le traitement avec le modèle CamemBERT
+├── infrastructure/
+│   ├── repositories/      # Contient les implémentations des repositories (accès aux données)
+│   └── services/          # Contient les services (logique métier supplémentaire ou intégrations externes)
+├── src/
+│   ├── app.py             # Point d'entrée pour le lancement de l'application (Dash Plotly)
+│   ├── commands.py        # Script pour les interactions en ligne de commande
+│   └── config.json        # Fichier de configuration pour les variables d'environnement
+├── tests/
+│   ├── test_usecases.py   # Tests pour valider les différents cas d'utilisation
+│   ├── test_fetchers.py   # Tests pour valider les fetchers (récupérateurs de données via les APIs data.gouv.fr et data.economie.gouv.fr)
+│   └── fixtures/          # Données de test et données de sortie des fetchers
+├── app/
+│   ├── static/            # Fichiers statiques utilisés par l'application front-end, tels que les images, les fichiers CSS, JavaScript, etc.
+│   └── templates/         # Fichiers HTML utilisés pour le rendu du front-end côté serveur, notamment pour les pages du tableau de bord
+├── data/
+│   └── raw/               # Contient les données brutes récupérées via les APIs
+└── trained_models/        # Contient les poids des modèles pré-entraînés pour l'inférence (CamemBERT). Ces modèles sont utilisés pour prédire les catégories et sous-catégories des discussions.
+
+```
+
+## License
+
+Ce projet est sous licence MIT. Voir le fichier [LICENSE](LICENSE) pour plus d'informations.
