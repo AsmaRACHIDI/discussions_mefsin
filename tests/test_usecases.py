@@ -1,12 +1,15 @@
 import pytest
 import json
 import os
+import csv
+
 from core.config import Config
 from tinydb import TinyDB
 from tinydb.storages import MemoryStorage
 from domain.models import Message
 from infrastructure.repositories.tinydb_comment_repository import TinyDBCommentRepository
 from domain.usecases import create_message, FetchAndStoreDiscussions
+from src.format import append_to_csv
 from typing import Dict
 
 @pytest.fixture
@@ -134,3 +137,39 @@ def test_fetch_and_store_discussions(tinydb_repository, sample_discussions_data_
     assert len(messages) == 2, f"Expected 2 messages, but found {len(messages)}"
     assert messages[0].discussion_id == sample_discussions_data_gouv[0].get('discussion_id') or sample_discussions_data_gouv[0].get('message_id')
     assert messages[1].discussion_id == sample_discussions_data_gouv[1].get('discussion_id') or sample_discussions_data_gouv[1].get('message_id')
+
+
+def test_json_to_csv_conversion(tinydb_repository, sample_discussions_data_gouv, sample_discussions_data_eco):
+    # Ajouter 2 messages pour data_gouv et 2 messages pour data_eco
+    for data in [sample_discussions_data_gouv[:2], sample_discussions_data_eco[:2]]:
+        for discussion in data:
+            message = create_message(tinydb_repository, discussion, {})
+            tinydb_repository.add_message(message)
+    
+    # Convertir les messages en JSON
+    json_data = tinydb_repository.get_all_messages()
+    json_data_dict = [message.to_dict() for message in json_data]
+
+    # Vérifier que json_data_dict est une liste de dictionnaires
+    assert isinstance(json_data_dict, list)
+    assert all(isinstance(item, dict) for item in json_data_dict)
+
+    # Chemin temporaire pour le fichier CSV de test
+    test_csv_path = "tests/test_output.csv"
+    
+    # Appeler la fonction append_to_csv
+    append_to_csv(test_csv_path, json_data_dict)
+    
+    # Vérifier que le fichier CSV a été créé et n'est pas vide
+    assert os.path.exists(test_csv_path), "Le fichier CSV n'a pas été créé."
+    
+    with open(test_csv_path, 'r', encoding='utf-8') as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=';')
+        csv_data = list(reader)
+    
+    # Vérifier que le CSV contient les données correctes
+    assert len(csv_data) == len(json_data_dict), "Le nombre de lignes dans le fichier CSV ne correspond pas au nombre de dictionnaires JSON."
+    assert all(any(item[key] == value for key, value in dict_data.items()) for item, dict_data in zip(csv_data, json_data_dict))
+    
+    # Nettoyer le fichier après le test
+    os.remove(test_csv_path)
