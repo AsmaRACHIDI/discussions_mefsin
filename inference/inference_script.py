@@ -6,7 +6,6 @@ import pandas as pd
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-# Ensure the 'inference' directory is in the Python path
 sys.path.append('/home/oem/Documents/open-data-discussions')
 
 from inference.preprocess import preprocess_data
@@ -35,9 +34,13 @@ def load_model_from_zip(model_zip, extraction_number):
     return model, tokenizer
 
 
-def perform_inference(model, tokenizer, input_dataframe, is_second_preprocess=False):
+def perform_inference(model, tokenizer, input_json, is_second_preprocess=False):
     print(f"Inférence modèle {'2' if is_second_preprocess else '1'} :")
-    preprocessed_data = preprocess_data(input_dataframe, is_second_preprocess)
+
+    # Convertir le JSON en DataFrame pour un traitement plus facile (ou traiter directement le JSON si vous préférez)
+    df = pd.DataFrame([input_json])
+
+    preprocessed_data = preprocess_data(df, is_second_preprocess)
     if preprocessed_data is None:
         raise ValueError("La fonction preprocess_data a renvoyé None. Veuillez vérifier la fonction.")
 
@@ -58,31 +61,23 @@ def perform_inference(model, tokenizer, input_dataframe, is_second_preprocess=Fa
     return predictions
 
 
-def annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-data-discussions/app/static/data/data_gouv_discussions.csv", output_csv_file_model="app/static/data/models_predicted_data.csv"):
-    model1_zip_file = "/home/oem/Documents/open-data-discussions/trained_models/bert-finetuned-my-data-final_archive.zip"
-    model2_zip_file = "/home/oem/Documents/open-data-discussions/trained_models/bert-finetuned-my-data-final2_archive2.zip"
-
+def annotate_data_from_json(input_json, model1_zip, model2_zip):
     # Chargez et préparez les modèles
-    model1, tokenizer1 = load_model_from_zip(model1_zip_file, 1)
-    model2, tokenizer2 = load_model_from_zip(model2_zip_file, 2)
-
-    # Chargez le DataFrame d'entrée
-    df = pd.read_csv(input_csv_df_mefsin, delimiter=',')
+    model1, tokenizer1 = load_model_from_zip(model1_zip, 1)
+    model2, tokenizer2 = load_model_from_zip(model2_zip, 2)
 
     # Effectuez l'inférence avec le modèle 1
-    predictions_model1 = perform_inference(model1, tokenizer1, df)
-    df["prediction_motif"] = [id2label[prediction] for prediction in predictions_model1]
+    predictions_model1 = perform_inference(model1, tokenizer1, input_json)
+    input_json["prediction_motif"] = id2label[predictions_model1[0]]
 
     # Effectuez l'inférence avec le modèle 2 en spécifiant is_second_preprocess=True
-    predictions_model2 = perform_inference(model2, tokenizer2, df, is_second_preprocess=True)
-    df["prediction_sous_motif"] = [id2sslabel[prediction] for prediction in predictions_model2]
-
-    # Enregistrez les DataFrames de sortie au format CSV
-    df.to_csv(output_csv_file_model, index=False)
+    predictions_model2 = perform_inference(model2, tokenizer2, input_json, is_second_preprocess=True)
+    input_json["prediction_sous_motif"] = id2sslabel[predictions_model2[0]]
 
     print("Les données ont été annotées avec succès !")
-
-    return df
+    
+    # Retourne le JSON annoté
+    return input_json
 
 
 def annotate_a_message(title, message):
