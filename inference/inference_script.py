@@ -9,8 +9,8 @@ from transformers import AutoTokenizer, AutoModelForSequenceClassification
 sys.path.append('/home/oem/Documents/open-data-discussions')
 
 from inference.preprocess import preprocess_data
-
 from inference import categories
+from core.config import Config
 
 # Accédez aux dictionnaires définis dans categories.py
 labels = categories.LABELS
@@ -21,6 +21,9 @@ sslabels = categories.SSLABELS
 id2sslabel = categories.ID2SSLABEL
 sslabel2id = categories.SSLABEL2ID
 
+
+model1_zip_file = "../trained_models/bert-finetuned-my-data-final_archive.zip"
+model2_zip_file = "../trained_models/bert-finetuned-my-data-final2_archive2.zip"
 
 def load_model_from_zip(model_zip, extraction_number):
     extract_dir = f"/home/oem/Documents/open-data-discussions/trained_models/extracted_model{extraction_number}"
@@ -34,12 +37,16 @@ def load_model_from_zip(model_zip, extraction_number):
     return model, tokenizer
 
 
-def perform_inference(model, tokenizer, input_json, is_second_preprocess=False):
+def perform_inference(model, tokenizer, input_data, is_second_preprocess=False):
     print(f"Inférence modèle {'2' if is_second_preprocess else '1'} :")
 
-    # Convertir le JSON en DataFrame pour un traitement plus facile (ou traiter directement le JSON si vous préférez)
-    df = pd.DataFrame([input_json])
+    # Vérifie si l'entrée est déjà un DataFrame ou s'il s'agit d'un dict comme pour les fichiers json
+    if isinstance(input_data, pd.DataFrame):
+        df = input_data
+    else:
+        df = pd.DataFrame([input_data]) # df = pd.DataFrame([{'title': title, 'comment': comment}])
 
+    # Préprocesser les données
     preprocessed_data = preprocess_data(df, is_second_preprocess)
     if preprocessed_data is None:
         raise ValueError("La fonction preprocess_data a renvoyé None. Veuillez vérifier la fonction.")
@@ -61,8 +68,11 @@ def perform_inference(model, tokenizer, input_json, is_second_preprocess=False):
     return predictions
 
 
-def annotate_data_from_json(input_json, model1_zip, model2_zip):
+
+def annotate_data_from_json(input_json):
     # Chargez et préparez les modèles
+    model1_zip = Config.MODEL1_ZIP_FILE
+    model2_zip = Config.MODEL2_ZIP_FILE
     model1, tokenizer1 = load_model_from_zip(model1_zip, 1)
     model2, tokenizer2 = load_model_from_zip(model2_zip, 2)
 
@@ -80,28 +90,25 @@ def annotate_data_from_json(input_json, model1_zip, model2_zip):
     return input_json
 
 
-def annotate_a_message(title, message):
-    extract_dir1 = f"/home/oem/Documents/open-data-discussions/trained_models/extracted_model1"
-    extract_dir2 = f"/home/oem/Documents/open-data-discussions/trained_models/extracted_model2"
+def annotate_a_message(discussion_title, comment):
+    # Extraire et charger les modèles
+    model1_zip = Config.MODEL1_ZIP_FILE
+    model2_zip = Config.MODEL2_ZIP_FILE
+    model1, tokenizer1 = load_model_from_zip(model1_zip, 1)
+    model2, tokenizer2 = load_model_from_zip(model2_zip, 2)
 
-    # Charger et préparer les modèles
-    model1 = AutoModelForSequenceClassification.from_pretrained(extract_dir1)
-    model2 = AutoModelForSequenceClassification.from_pretrained(extract_dir2)
-    tokenizer1 = AutoTokenizer.from_pretrained(extract_dir1)
-    tokenizer2 = AutoTokenizer.from_pretrained(extract_dir2)
-
-    df = pd.DataFrame([{'title': title, 'first_message': message}])
-    df.to_csv("app/static/data/res_sandbox_inferance.csv", sep=';', index=False)
+    # Créer un dictionnaire avec le titre et le message
+    input_data = {'discussion_title': discussion_title, 'comment': comment}
 
     # Inférence avec le modèle 1
-    predictions_model1 = perform_inference(model1, tokenizer1, df)
-    df["prediction_motif"] = [id2label[predictions_model1[0]]]
-    prediction_motif = df["prediction_motif"][0]
+    predictions_model1 = perform_inference(model1, tokenizer1, input_data)
+    input_data["prediction_motif"] = id2label[predictions_model1[0]]
+    prediction_motif = input_data["prediction_motif"]
 
     # Inférence avec le modèle 2
-    predictions_model2 = perform_inference(model2, tokenizer2, df, is_second_preprocess=True)
-    df["prediction_sous_motif"] = [id2sslabel[predictions_model2[0]]]
-    prediction_sous_motif = df["prediction_sous_motif"][0]
+    predictions_model2 = perform_inference(model2, tokenizer2, input_data, is_second_preprocess=True)
+    input_data["prediction_sous_motif"] = id2sslabel[predictions_model2[0]]
+    prediction_sous_motif = input_data["prediction_sous_motif"]
 
     print("Les données ont été annotées avec succès !")
 
@@ -110,6 +117,6 @@ def annotate_a_message(title, message):
 
 #annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-data-discussions/app/static/data/data_gouv_discussions.csv")
 
-#prediction_motif, prediction_sous_motif = annotate_a_message("Problème d'accès aux données", "Bonjour, j'essaye d'accéder aux données mais je n'y arrive pas. Merci de m'aider. Cordialement.")
-#print("Catégorie prédite:", prediction_motif)
-#print("Sous-catégorie prédite:", prediction_sous_motif)
+# prediction_motif, prediction_sous_motif = annotate_a_message("Problème d'accès aux données", "Bonjour, j'essaye d'accéder aux données mais je n'y arrive pas. Merci de m'aider. Cordialement.")
+# print("Catégorie prédite:", prediction_motif)
+# print("Sous-catégorie prédite:", prediction_sous_motif)
