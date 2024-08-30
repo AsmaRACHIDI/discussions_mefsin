@@ -1,5 +1,3 @@
-# Makefile pour automatiser les tâches de mise à jour et de conversion
-
 # Mettre à jour les données
 update_data:
 	python scripts/update_data.py
