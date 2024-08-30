@@ -14,12 +14,19 @@ def preprocess_data(examples, is_second_preprocess=False):
         #logging.info(f"Prétraitement des données en cours... {'(2)' if is_second_preprocess else '(1)'}")
         print(f"Prétraitement des données en cours... {'(2)' if is_second_preprocess else '(1)'}")
         
+        # Remplacez les NaN par des chaînes vides
+        examples.fillna("", inplace=True)
+
+        # Convertir toutes les colonnes pertinentes en chaînes de caractères
+        examples['discussion_title'] = examples['discussion_title'].apply(lambda x: str(x).lower())
+        examples['comment'] = examples['comment'].apply(lambda x: str(x).lower())
+
         if is_second_preprocess:
             combined_text = (
-                examples["prediction_motif"] + " " + examples["title"] + " " + examples["first_message"]
+                examples["prediction_motif"] + " " + examples["discussion_title"] + " " + examples["comment"]
             )
         else:
-            combined_text = examples["title"] + " " + examples["first_message"]
+            combined_text = examples["discussion_title"] + " " + examples["comment"]
 
         # Nettoyage du texte
         # Convertir chaque texte en minuscules
