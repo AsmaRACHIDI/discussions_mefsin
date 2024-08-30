@@ -8,6 +8,7 @@ from infrastructure.services.api_fetcher_manager import APIFetcherManager
 from domain.models import Message
 from infrastructure.repositories.tinydb_comment_repository import TinyDBCommentRepository
 from src.format import dump_json
+from inference.inference_script import annotate_a_message
 
 
 def fetch_and_format_data(api_type):
@@ -79,6 +80,34 @@ def process_and_store_data(api_type):
     print(f"Finished processing discussions from {api_type}")
 
 
+def infer_and_update_messages():
+    repository = TinyDBCommentRepository()
+    
+    messages = repository.get_all_messages()
+
+    total_messages = len(messages)
+    annotated_messages = 0
+
+    for message in messages:
+        if not message.prediction_motif or not message.prediction_sous_motif:
+            prediction_motif, prediction_sous_motif = annotate_a_message(
+                message.discussion_title,
+                message.comment
+            )
+            # Préparez le dictionnaire de mise à jour
+            updated_message = {
+                "prediction_motif": prediction_motif,
+                "prediction_sous_motif": prediction_sous_motif
+            }
+            # Appelez la méthode update_message avec les bons arguments
+            repository.update_message(message.discussion_id, updated_message)
+            
+            annotated_messages += 1  # Incrémentez le compteur des messages annotés
+            print(f"\n{annotated_messages} messages annotés / {total_messages} messages")
+    
+    print(f"Inference and update of messages completed.")
+
+
 def save_json_data(repository, output_path):
     json_data = repository.get_all_messages()
     json_data_dict = [message.to_dict() for message in json_data]
@@ -91,6 +120,8 @@ def main():
 
     process_and_store_data("data_gouv")
     process_and_store_data("data_eco")
+
+    infer_and_update_messages()
 
     json_output_path = "app/static/data/test.json"
     save_json_data(repository, json_output_path)
