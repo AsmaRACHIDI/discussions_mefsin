@@ -85,27 +85,32 @@ def infer_and_update_messages():
     
     messages = repository.get_all_messages()
 
-    total_messages = len(messages)
+    # Filtrer les messages non annotés
+    unannotated_messages = [
+        message for message in messages 
+        if not message.prediction_motif or not message.prediction_sous_motif
+    ]
+
+    total_messages = len(unannotated_messages)
     annotated_messages = 0
 
-    for message in messages:
-        if not message.prediction_motif or not message.prediction_sous_motif:
-            prediction_motif, prediction_sous_motif = annotate_a_message(
-                message.discussion_title,
-                message.comment
-            )
-            # Préparez le dictionnaire de mise à jour
-            updated_message = {
-                "prediction_motif": prediction_motif,
-                "prediction_sous_motif": prediction_sous_motif
-            }
-            # Appelez la méthode update_message avec les bons arguments
-            repository.update_message(message.discussion_id, updated_message)
-            
-            annotated_messages += 1  # Incrémentez le compteur des messages annotés
-            print(f"\n{annotated_messages} messages annotés / {total_messages} messages")
+    for message in unannotated_messages:
+        prediction_motif, prediction_sous_motif = annotate_a_message(
+            message.discussion_title,
+            message.comment
+        )
+        # Préparez le dictionnaire de mise à jour
+        updated_message = {
+            "prediction_motif": prediction_motif,
+            "prediction_sous_motif": prediction_sous_motif
+        }
+        # Appelez la méthode update_message avec les bons arguments
+        repository.update_message(message.discussion_id, updated_message)
+        
+        annotated_messages += 1  # Incrémentez le compteur des messages annotés
+        print(f"\n{annotated_messages} messages annotés / {total_messages} messages")
     
-    print(f"Inference and update of messages completed.")
+    print("Inference and update of messages completed.")
 
 
 def save_json_data(repository, output_path):
