@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 class Message:
-    def __init__(self, discussion_id: str, discussion_created: str, discussion_closed: bool, dataset_id: str, parent_discussion_id: str, discussion_title: str, comment: str, url_discussion: str, dataset_title: str, dataset_publisher: str, dataset_created_at: str, dataset_updated_at: str, dataset_url: str, source: str = None):
+    def __init__(self, discussion_id: str, discussion_created: str, discussion_closed: bool, dataset_id: str, parent_discussion_id: str, discussion_title: str, comment: str, url_discussion: str, dataset_title: str, dataset_publisher: str, dataset_created_at: str, dataset_updated_at: str, dataset_url: str, source: str, prediction_motif: str = None, prediction_sous_motif: str = None):
         self.discussion_id = discussion_id
         self.discussion_created = discussion_created
         self.discussion_closed = discussion_closed
@@ -16,10 +16,13 @@ class Message:
         self.dataset_updated_at = dataset_updated_at
         self.dataset_url = dataset_url
         self.source = source
+        self.prediction_motif = prediction_motif
+        self.prediction_sous_motif = prediction_sous_motif
 
     @classmethod
-    def create(cls, discussion_id: str, discussion_created: str, discussion_closed: bool, dataset_id: str, parent_discussion_id: str, discussion_title: str, comment: str, url_discussion: str, dataset_title: str, dataset_publisher: str, dataset_created_at: str, dataset_updated_at: str, dataset_url: str, source: str = None) -> Message:
-        return cls(discussion_id, discussion_created, discussion_closed, dataset_id, parent_discussion_id, discussion_title, comment, url_discussion, dataset_title, dataset_publisher, dataset_created_at, dataset_updated_at, dataset_url, source)
+    def create(cls, discussion_id: str, discussion_created: str, discussion_closed: bool, dataset_id: str, parent_discussion_id: str, discussion_title: str, comment: str, url_discussion: str, dataset_title: str, dataset_publisher: str, dataset_created_at: str, dataset_updated_at: str, dataset_url: str, 
+source: str = None, prediction_motif: str = None, prediction_sous_motif: str = None) -> Message:
+        return cls(discussion_id, discussion_created, discussion_closed, dataset_id, parent_discussion_id, discussion_title, comment, url_discussion, dataset_title, dataset_publisher, dataset_created_at, dataset_updated_at, dataset_url, source, prediction_motif, prediction_sous_motif)
 
     def to_dict(self) -> dict:
         return {
@@ -36,5 +39,7 @@ class Message:
             'dataset_created_at': self.dataset_created_at,
             'dataset_updated_at': self.dataset_updated_at,
             'dataset_url': self.dataset_url,
-            'source': self.source
+            'source': self.source,
+            'prediction_motif': self.prediction_motif,
+            'prediction_sous_motif': self.prediction_sous_motif
         }
