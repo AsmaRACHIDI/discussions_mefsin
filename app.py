@@ -28,7 +28,7 @@ def sandbox_route():
         title = request.form.get("title")
         message = request.form.get("message")
         
-        prediction_motif, prediction_sous_motif = annotate_a_message(title=title, message=message)
+        prediction_motif, prediction_sous_motif = annotate_a_message(discussion_title=title, comment=message)
 
         # Redirigez vers la page /results avec les données du formulaire
         return redirect(url_for("sandbox_result", title=title, message=message, prediction_motif=prediction_motif, prediction_sous_motif=prediction_sous_motif))
@@ -50,7 +50,7 @@ def sandbox_result():
         # Effectuez le traitement du formulaire POST ici si nécessaire
         title = request.form.get("title")
         message = request.form.get("message")
-        prediction_motif, prediction_sous_motif = annotate_a_message(title=title, message=message)
+        prediction_motif, prediction_sous_motif = annotate_a_message(discussion_title=title, comment=message)
 
         # Redirigez vers la page /results avec les données du formulaire
         return redirect(url_for("sandbox_result", title=title, message=message, prediction_motif=prediction_motif, prediction_sous_motif=prediction_sous_motif))
@@ -59,40 +59,37 @@ def sandbox_result():
 
 @app.route('/dataset')
 def dataset():
-    # Charger le fichier CSV en tant que DataFrame
-    df = pd.read_csv("app/static/data/data_gouv_discussions.csv", delimiter=",")
+    # Charger le fichier JSON en tant que DataFrame
+    df = pd.read_json("app/static/data/test.json")
     df = df.reset_index()
-    # Convertir le DataFrame en un dictionnaire de listes
-    data_dict = df.to_dict(orient='split')
-    columns = data_dict['columns']
-    data = data_dict['data']
+    
+    # Obtenir les colonnes et les données
+    columns = df.columns.tolist()
+    data = df.values.tolist()
+    
     return render_template('dataset.html', columns=columns, data=data)
+
 
 @app.route('/dataset/download/csv')
 def download_csv():
-    return send_file("app/static/data/data_gouv_discussions.csv", as_attachment=True)
+    df = pd.read_json("app/static/data/test.json")
+    output = io.StringIO()
+    df.to_csv(output, index=False)
+    return send_file(io.BytesIO(output.getvalue().encode()), as_attachment=True, download_name="dataset.csv")
 
 @app.route('/dataset/download/excel')
 def download_excel():
-    # Télécharger le fichier Excel
-    df = pd.read_csv("app/static/data/data_gouv_discussions.csv", delimiter=",")
-    output = 'dataset.xlsx'
-    df.to_excel(output, index=False)
-    return send_file(output, as_attachment=True)
+    df = pd.read_json("app/static/data/test.json")
+    output = io.BytesIO()
+    with pd.ExcelWriter(output, engine='openpyxl') as writer:
+        df.to_excel(writer, index=False)
+    output.seek(0)
+    return send_file(output, as_attachment=True, download_name="dataset.xlsx")
 
 @app.route('/dataset/download/json')
 def download_json():
-    # Charger le fichier CSV en tant que DataFrame
-    df = pd.read_csv("app/static/data/data_gouv_discussions.csv", delimiter=",")
-    
-    # Convertir le DataFrame en JSON
-    output = df.to_json(orient='records')
-    
-    # Envoyer les données JSON en tant que fichier téléchargeable
-    return send_file(io.BytesIO(output.encode()), 
-                     mimetype="application/json", 
-                     as_attachment=True, 
-                     download_name="dataset.json")
+    return send_file("app/static/data/test.json", as_attachment=True)
+
 
 ##################### Barre latérale : Menu #################################################################
 
