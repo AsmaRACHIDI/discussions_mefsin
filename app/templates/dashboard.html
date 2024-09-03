@@ -12,18 +12,18 @@
         <div class="table-container">      
             <div id="treemap" class="graph-container"></div>
             <script>
-                // Charger les données CSV à partir d'un répertoire externe
-                d3.csv("/static/data/models_predicted_data.csv").then(function(data) {
+                // Charger les données JSON à partir du fichier local
+                d3.json("/static/data/test.json").then(function(data) {
                     // Initialiser les compteurs pour chaque catégorie et sous-catégorie
                     var categoryCounts = {};
                     var subcategoryCounts = {};
                     var datasetCounts = {};
 
-                    // Compter le nombre d'occurrences de chaque catégorie et sous-catégorie
+                    // Compter le nombre d'occurrences de chaque catégorie, sous-catégorie, et jeu de données
                     data.forEach(function(d) {
-                        var category = d["prediction_motif"];
-                        var subcategory = d["prediction_sous_motif"];
-                        var dataset = d["title"];
+                        var category = d.prediction_motif;
+                        var subcategory = d.prediction_sous_motif;
+                        var dataset = d.dataset_title;
 
                         categoryCounts[category] = (categoryCounts[category] || 0) + 1;
                         subcategoryCounts[subcategory] = (subcategoryCounts[subcategory] || 0) + 1;
@@ -47,8 +47,8 @@
                         labels.push(subcategory);
                         // Récupérer la catégorie parente de chaque sous-catégorie
                         var parentCategory = data.find(function(d) {
-                            return d["prediction_sous_motif"] === subcategory;
-                        })["prediction_motif"];
+                            return d.prediction_sous_motif === subcategory;
+                        }).prediction_motif;
                         parents.push(parentCategory);
                         values.push(subcategoryCounts[subcategory]);
                     });
@@ -60,10 +60,6 @@
                         parents: parents,
                         values: values,
                         textinfo: 'label+value',
-                        // textfont: {
-                        //     size: 14,
-                        //     color: 'white'
-                        // }
                     }];
 
                     var layout = {
@@ -90,7 +86,7 @@
                 var problemCounts = {};
 
                 data.forEach(function(d) {
-                    var problem = d["prediction_sous_motif"];
+                    var problem = d.prediction_sous_motif;
                     problemCounts[problem] = (problemCounts[problem] || 0) + 1;
                 });
 
@@ -178,7 +174,7 @@
                     });
                 });
                 }).catch(function(error) {
-                console.log(error); // Gérer les éventuelles erreurs de chargement du fichier CSV
+                console.log(error); // Gérer les éventuelles erreurs de chargement du fichier JSON
                 });
             </script>
 
