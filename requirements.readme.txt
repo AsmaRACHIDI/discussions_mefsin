@@ -1,0 +1,4 @@
+- Trouver la commande qui permet de faire des imports de dépendances chaînés.
+- Cette commande se met au début du fichier requirements et permet d'appeler les dépendances qui viennent d'un autre
+  fichier pour les installer.
+- dev dépend de prod && ds dépend de dev
