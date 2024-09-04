@@ -24,25 +24,31 @@ def tinydb_repository():
     if os.path.exists(Config.TINYDB_PATH):
         os.remove(Config.TINYDB_PATH)  # Remove the JSON file after each test
 
+
 def load_json_fixture(filename):
-    with open(filename, 'r') as f:
+    with open(filename, "r") as f:
         return json.load(f)
+
 
 @pytest.fixture
 def sample_discussions_data_gouv():
-    return load_json_fixture('tests/fixtures/samples_data/sample_data_gouv_discussions.json')
+    return load_json_fixture("tests/fixtures/samples_data/sample_data_gouv_discussions.json")
+
 
 @pytest.fixture
 def sample_datasets_data_gouv():
-    return load_json_fixture('tests/fixtures/samples_data/sample_data_gouv_datasets.json')
+    return load_json_fixture("tests/fixtures/samples_data/sample_data_gouv_datasets.json")
+
 
 @pytest.fixture
 def sample_discussions_data_eco():
-    return load_json_fixture('tests/fixtures/samples_data/sample_data_eco_discussions.json')
+    return load_json_fixture("tests/fixtures/samples_data/sample_data_eco_discussions.json")
+
 
 @pytest.fixture
 def sample_datasets_data_eco():
-    return load_json_fixture('tests/fixtures/samples_data/sample_data_eco_datasets.json')
+    return load_json_fixture("tests/fixtures/samples_data/sample_data_eco_datasets.json")
+
 
 @pytest.fixture
 def sample_message():
@@ -60,7 +66,7 @@ def sample_message():
         dataset_created_at="2023-01-01",
         dataset_updated_at="2023-01-02",
         dataset_url="http://example.com/dataset",
-        source="data_gouv"
+        source="data_gouv",
     )
 
 
@@ -68,32 +74,28 @@ def test_create_message_data_gouv(tinydb_repository, sample_discussions_data_gou
     sample_discussion = sample_discussions_data_gouv[0]
     sample_dataset = sample_datasets_data_gouv[0]
     message = create_message(
-        discussion=sample_discussion,
-        dataset=sample_dataset,
-        discussion_title=sample_discussion.get("title", "")
+        discussion=sample_discussion, dataset=sample_dataset, discussion_title=sample_discussion.get("title", "")
     )
     tinydb_repository.add_message(message)
     retrieved_message = tinydb_repository.get_message_by_sk(sample_discussion["discussion_id"])
     assert retrieved_message is not None
     assert isinstance(message, Message)
     assert retrieved_message.discussion_id == sample_discussion["discussion_id"]
-    assert retrieved_message.dataset_title == sample_dataset.get('title', "")
+    assert retrieved_message.dataset_title == sample_dataset.get("title", "")
 
 
 def test_create_message_data_eco(tinydb_repository, sample_discussions_data_eco, sample_datasets_data_eco):
     sample_discussion = sample_discussions_data_eco[0]
     sample_dataset = sample_datasets_data_eco[0]
     message = create_message(
-        discussion=sample_discussion,
-        dataset=sample_dataset,
-        discussion_title=sample_discussion.get("title", "")
+        discussion=sample_discussion, dataset=sample_dataset, discussion_title=sample_discussion.get("title", "")
     )
     tinydb_repository.add_message(message)
     retrieved_message = tinydb_repository.get_message_by_sk(sample_discussion["discussion_id"])
     assert retrieved_message is not None
     assert isinstance(message, Message)
     assert retrieved_message.discussion_id == sample_discussion["discussion_id"]
-    assert retrieved_message.dataset_title == sample_dataset.get('title', "")
+    assert retrieved_message.dataset_title == sample_dataset.get("title", "")
 
 
 def test_get_message_by_id(tinydb_repository, sample_message):
@@ -131,9 +133,7 @@ def test_create_duplicate_message(tinydb_repository, sample_discussions_data_gou
     sample_discussion = sample_discussions_data_gouv[0]
     sample_dataset = sample_datasets_data_gouv[0]
     message = create_message(
-        discussion=sample_discussion,
-        dataset=sample_dataset,
-        discussion_title=sample_discussion.get("title", "")
+        discussion=sample_discussion, dataset=sample_dataset, discussion_title=sample_discussion.get("title", "")
     )
     tinydb_repository.add_message(message)
     tinydb_repository.add_message(message)  # Try adding the same message again
@@ -141,17 +141,20 @@ def test_create_duplicate_message(tinydb_repository, sample_discussions_data_gou
     assert len(messages) == 1, f"Expected 1 message, but found {len(messages)}"
 
 
-@pytest.mark.parametrize("api_type, sample_data", [
-    ("data_gouv", 'tests/fixtures/samples_data/sample_data_gouv_discussions.json'),
-    ("data_eco", 'tests/fixtures/samples_data/sample_data_eco_discussions.json'),
-])
+@pytest.mark.parametrize(
+    "api_type, sample_data",
+    [
+        ("data_gouv", "tests/fixtures/samples_data/sample_data_gouv_discussions.json"),
+        ("data_eco", "tests/fixtures/samples_data/sample_data_eco_discussions.json"),
+    ],
+)
 def test_process_and_store_data(tinydb_repository, api_type, sample_data):
     # Charger les données de l'échantillon pour l'API simulée
-    with open(sample_data, 'r') as f:
+    with open(sample_data, "r") as f:
         sample_discussions_data = json.load(f)
 
     # Utiliser patch pour simuler les appels API
-    with patch('infrastructure.services.api_fetcher_manager.APIFetcherManager.get_client') as mock_get_client:
+    with patch("infrastructure.services.api_fetcher_manager.APIFetcherManager.get_client") as mock_get_client:
         mock_fetcher = mock_get_client.return_value
         mock_fetcher.fetch_discussions.return_value = sample_discussions_data
         mock_fetcher.fetch_datasets.return_value = []
@@ -168,13 +171,9 @@ def test_process_and_store_data(tinydb_repository, api_type, sample_data):
 def test_json_to_csv_conversion(tinydb_repository, sample_discussions_data_gouv, sample_discussions_data_eco):
     # Ajouter 2 messages pour data_gouv et 2 messages pour data_eco
     for discussion in sample_discussions_data_gouv[:2] + sample_discussions_data_eco[:2]:
-        message = create_message(
-            discussion=discussion,
-            dataset={},
-            discussion_title=discussion.get("title", "")
-        )
+        message = create_message(discussion=discussion, dataset={}, discussion_title=discussion.get("title", ""))
         tinydb_repository.add_message(message)
-    
+
     # Convertir les messages en JSON
     json_data = tinydb_repository.get_all_messages()
     json_data_dict = [message.to_dict() for message in json_data]
@@ -185,12 +184,16 @@ def test_json_to_csv_conversion(tinydb_repository, sample_discussions_data_gouv,
     test_csv_path = "tests/test_output.csv"
     append_to_csv(test_csv_path, json_data_dict)
     assert os.path.exists(test_csv_path), "Le fichier CSV n'a pas été créé."
-    
-    with open(test_csv_path, 'r', encoding='utf-8') as csvfile:
-        reader = csv.DictReader(csvfile, delimiter=';')
+
+    with open(test_csv_path, "r", encoding="utf-8") as csvfile:
+        reader = csv.DictReader(csvfile, delimiter=";")
         csv_data = list(reader)
-    
-    assert len(csv_data) == len(json_data_dict), "Le nombre de lignes dans le fichier CSV ne correspond pas au nombre de dictionnaires JSON."
-    assert all(any(item[key] == value for key, value in dict_data.items()) for item, dict_data in zip(csv_data, json_data_dict))
-    
+
+    assert len(csv_data) == len(
+        json_data_dict
+    ), "Le nombre de lignes dans le fichier CSV ne correspond pas au nombre de dictionnaires JSON."
+    assert all(
+        any(item[key] == value for key, value in dict_data.items()) for item, dict_data in zip(csv_data, json_data_dict)
+    )
+
     os.remove(test_csv_path)

@@ -6,7 +6,7 @@ import pandas as pd
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-sys.path.append('/home/oem/Documents/open-data-discussions')
+sys.path.append("/home/oem/Documents/open-data-discussions")
 
 from inference.preprocess import preprocess_data
 from inference import categories
@@ -24,6 +24,7 @@ sslabel2id = categories.SSLABEL2ID
 
 model1_zip_file = "../trained_models/bert-finetuned-my-data-final_archive.zip"
 model2_zip_file = "../trained_models/bert-finetuned-my-data-final2_archive2.zip"
+
 
 def load_model_from_zip(model_zip, extraction_number):
     extract_dir = f"/home/oem/Documents/open-data-discussions/trained_models/extracted_model{extraction_number}"
@@ -44,7 +45,7 @@ def perform_inference(model, tokenizer, input_data, is_second_preprocess=False):
     if isinstance(input_data, pd.DataFrame):
         df = input_data
     else:
-        df = pd.DataFrame([input_data]) # df = pd.DataFrame([{'title': title, 'comment': comment}])
+        df = pd.DataFrame([input_data])  # df = pd.DataFrame([{'title': title, 'comment': comment}])
 
     # Préprocesser les données
     preprocessed_data = preprocess_data(df, is_second_preprocess)
@@ -55,7 +56,7 @@ def perform_inference(model, tokenizer, input_data, is_second_preprocess=False):
     batch_size = 16
     num_batches = len(preprocessed_data) // batch_size + int(len(preprocessed_data) % batch_size > 0)
     model.eval()
-    
+
     for i in range(num_batches):
         batch_texts = preprocessed_data[i * batch_size : (i + 1) * batch_size]
         with torch.no_grad():
@@ -66,7 +67,6 @@ def perform_inference(model, tokenizer, input_data, is_second_preprocess=False):
 
     print("Inférence terminée !")
     return predictions
-
 
 
 def annotate_data_from_json(input_json):
@@ -85,7 +85,7 @@ def annotate_data_from_json(input_json):
     input_json["prediction_sous_motif"] = id2sslabel[predictions_model2[0]]
 
     print("Les données ont été annotées avec succès !")
-    
+
     # Retourne le JSON annoté
     return input_json
 
@@ -98,7 +98,7 @@ def annotate_a_message(discussion_title, comment):
     model2, tokenizer2 = load_model_from_zip(model2_zip, 2)
 
     # Créer un dictionnaire avec le titre et le message
-    input_data = {'discussion_title': discussion_title, 'comment': comment}
+    input_data = {"discussion_title": discussion_title, "comment": comment}
 
     # Inférence avec le modèle 1
     predictions_model1 = perform_inference(model1, tokenizer1, input_data)
@@ -115,7 +115,7 @@ def annotate_a_message(discussion_title, comment):
     return prediction_motif, prediction_sous_motif
 
 
-#annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-data-discussions/app/static/data/data_gouv_discussions.csv")
+# annotate_data_from_csv_file(input_csv_df_mefsin="/home/oem/Documents/open-data-discussions/app/static/data/data_gouv_discussions.csv")
 
 # prediction_motif, prediction_sous_motif = annotate_a_message("Problème d'accès aux données", "Bonjour, j'essaye d'accéder aux données mais je n'y arrive pas. Merci de m'aider. Cordialement.")
 # print("Catégorie prédite:", prediction_motif)

@@ -4,31 +4,34 @@ import os.path
 
 # Fonction pour ouvrir un fichier JSON et charger ses données
 def open_json(filename):
-    with open(filename, "r", encoding='utf-8') as file:
+    with open(filename, "r", encoding="utf-8") as file:
         data = json.load(file)
         return data
 
+
 # Fonction pour sauvegarder des données dans un fichier JSON
 def dump_json(filename, data):
-    with open(filename, "w", encoding='utf-8') as file:
+    with open(filename, "w", encoding="utf-8") as file:
         json.dump(data, file, indent=2, ensure_ascii=False)
 
+
 # Fonction pour aplatir un dictionnaire imbriqué
-def flatten(dictionary, parent_key='', sep='_'):
+def flatten(dictionary, parent_key="", sep="_"):
     items = []
     for k, v in dictionary.items():
-        new_key = f'{parent_key}{sep}{k}' if parent_key else k
+        new_key = f"{parent_key}{sep}{k}" if parent_key else k
         if isinstance(v, dict):
             items.extend(flatten(v, new_key, sep=sep).items())
         elif isinstance(v, list):
             for i, item in enumerate(v):
                 if isinstance(item, dict):
-                    items.extend(flatten(item, f'{new_key}{sep}{i}', sep=sep).items())
+                    items.extend(flatten(item, f"{new_key}{sep}{i}", sep=sep).items())
                 else:
-                    items.append((f'{new_key}{sep}{i}', item))
+                    items.append((f"{new_key}{sep}{i}", item))
         else:
             items.append((new_key, v))
     return dict(items)
+
 
 # Fonction pour ajouter des données à un fichier CSV
 def append_to_csv(filename, data):
@@ -38,16 +41,17 @@ def append_to_csv(filename, data):
         raise ValueError("Tous les éléments de la liste doivent être des dictionnaires.")
 
     result = [flatten(d) for d in data]
-    
+
     if result:
         fieldnames = result[0].keys()
     else:
         fieldnames = []
 
-    with open(filename, "w", newline="", encoding='utf-8') as file:
-        writer = csv.DictWriter(file, delimiter=';', fieldnames=fieldnames, quoting=csv.QUOTE_MINIMAL)
+    with open(filename, "w", newline="", encoding="utf-8") as file:
+        writer = csv.DictWriter(file, delimiter=";", fieldnames=fieldnames, quoting=csv.QUOTE_MINIMAL)
         writer.writeheader()
         writer.writerows(result)
+
 
 # # Test de la fonction append_to_csv
 # def test_append_to_csv():
@@ -69,7 +73,7 @@ def append_to_csv(filename, data):
 #             "dataset_url": "https://www.data.gouv.fr/fr/datasets/fichier-des-entites-topographiques-topo-dgfip-1/"
 #         }
 #     ]
-    
+
 #     csv_filename = "test_output.csv"
 
 #     # Exécuter la fonction
@@ -84,7 +88,7 @@ def append_to_csv(filename, data):
 #     print("Contenu du fichier CSV généré :")
 #     for row in rows:
 #         print(row)
-    
+
 
 # # Exécuter le test
 # test_append_to_csv()

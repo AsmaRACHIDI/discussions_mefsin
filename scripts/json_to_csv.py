@@ -2,6 +2,7 @@ import csv
 import os
 from infrastructure.repositories.tinydb_comment_repository import TinyDBCommentRepository
 
+
 def json_to_csv(json_data, csv_file_path):
     # Vérifier si le répertoire de sortie existe, sinon le créer
     os.makedirs(os.path.dirname(csv_file_path), exist_ok=True)
@@ -9,20 +10,23 @@ def json_to_csv(json_data, csv_file_path):
     # Extraire les champs pertinents des données JSON
     fields = ["id", "title", "discussion", "prediction_motif", "prediction_sous_motif"]
 
-    with open(csv_file_path, 'w', newline='') as csv_file:
+    with open(csv_file_path, "w", newline="") as csv_file:
         writer = csv.DictWriter(csv_file, fieldnames=fields)
         writer.writeheader()
 
         for entry in json_data:
-            writer.writerow({
-                "id": entry.get("id"),
-                "title": entry.get("title"),
-                "discussion": entry.get("discussion"),
-                "prediction_motif": entry.get("prediction_motif"),
-                "prediction_sous_motif": entry.get("prediction_sous_motif")
-            })
+            writer.writerow(
+                {
+                    "id": entry.get("id"),
+                    "title": entry.get("title"),
+                    "discussion": entry.get("discussion"),
+                    "prediction_motif": entry.get("prediction_motif"),
+                    "prediction_sous_motif": entry.get("prediction_sous_motif"),
+                }
+            )
 
     print(f"Data has been successfully exported to {csv_file_path}")
+
 
 if __name__ == "__main__":
     # Charger les données depuis TinyDB

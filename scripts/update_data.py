@@ -2,7 +2,7 @@ import sys
 import os
 
 # Ajouter le répertoire parent au sys.path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from infrastructure.services.api_fetcher_manager import APIFetcherManager
 from domain.models import Message
@@ -13,20 +13,20 @@ from inference.inference_script import annotate_a_message
 
 def fetch_and_format_data(api_type):
     fetcher = APIFetcherManager.get_client(api_type)
-    
+
     discussions = fetcher.fetch_discussions()
     if discussions is None:
         print(f"Failed to fetch discussions from {api_type}")
         return [], {}
-    
+
     datasets = fetcher.fetch_datasets()
     if datasets is None:
         print(f"Failed to fetch datasets from {api_type}")
         return [], {}
 
     # Map datasets by ID
-    dataset_map = {dataset['dataset_id']: dataset for dataset in datasets}
-    
+    dataset_map = {dataset["dataset_id"]: dataset for dataset in datasets}
+
     return discussions, dataset_map
 
 
@@ -37,7 +37,7 @@ def create_message(discussion, dataset, discussion_title):
         discussion_closed=discussion.get("closed", ""),
         dataset_id=dataset.get("dataset_id", ""),
         parent_discussion_id=discussion.get("parent_discussion_id", ""),
-        discussion_title=discussion_title, 
+        discussion_title=discussion_title,
         comment=discussion.get("first_message") or discussion.get("comment", ""),
         url_discussion=discussion.get("url_discussion", ""),
         dataset_title=dataset.get("title"),
@@ -45,7 +45,7 @@ def create_message(discussion, dataset, discussion_title):
         dataset_created_at=dataset.get("created_at", ""),
         dataset_updated_at=dataset.get("updated_at", ""),
         dataset_url=dataset.get("url", ""),
-        source=discussion.get("source", "")
+        source=discussion.get("source", ""),
     )
 
 
@@ -54,14 +54,14 @@ def process_and_store_data(api_type):
 
     # Fetch and format data
     discussions, dataset_map = fetch_and_format_data(api_type)
-    
+
     if not discussions:
         print(f"No discussions to process from {api_type}")
         return
-    
+
     # Pour mapper parent_discussion_id et le title du discussion_id correspondant
-    discussion_map = {discussion['discussion_id']: discussion for discussion in discussions}
-    
+    discussion_map = {discussion["discussion_id"]: discussion for discussion in discussions}
+
     for discussion in discussions:
         dataset_id = discussion.get("dataset_id") or discussion.get("jdd_id")
         dataset = dataset_map.get(dataset_id, {})
@@ -82,34 +82,27 @@ def process_and_store_data(api_type):
 
 def infer_and_update_messages():
     repository = TinyDBCommentRepository()
-    
+
     messages = repository.get_all_messages()
 
     # Filtrer les messages non annotés
     unannotated_messages = [
-        message for message in messages 
-        if not message.prediction_motif or not message.prediction_sous_motif
+        message for message in messages if not message.prediction_motif or not message.prediction_sous_motif
     ]
 
     total_messages = len(unannotated_messages)
     annotated_messages = 0
 
     for message in unannotated_messages:
-        prediction_motif, prediction_sous_motif = annotate_a_message(
-            message.discussion_title,
-            message.comment
-        )
+        prediction_motif, prediction_sous_motif = annotate_a_message(message.discussion_title, message.comment)
         # Préparez le dictionnaire de mise à jour
-        updated_message = {
-            "prediction_motif": prediction_motif,
-            "prediction_sous_motif": prediction_sous_motif
-        }
+        updated_message = {"prediction_motif": prediction_motif, "prediction_sous_motif": prediction_sous_motif}
         # Appelez la méthode update_message avec les bons arguments
         repository.update_message(message.discussion_id, updated_message)
-        
+
         annotated_messages += 1  # Incrémentez le compteur des messages annotés
         print(f"\n{annotated_messages} messages annotés / {total_messages} messages")
-    
+
     print("Inference and update of messages completed.")
 
 
@@ -130,6 +123,7 @@ def main():
 
     json_output_path = "app/static/data/test.json"
     save_json_data(repository, json_output_path)
+
 
 if __name__ == "__main__":
     main()

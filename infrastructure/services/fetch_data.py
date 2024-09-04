@@ -8,15 +8,16 @@ import json
 
 HEADERS = {"Authorization": f"Apikey {Config.API_KEY}"}
 
-UNFORMATTED_DATA_DIR = 'tests/fixtures/unformatted_data'
-FORMATTED_DATA_DIR = 'tests/fixtures/formatted_data'
+UNFORMATTED_DATA_DIR = "tests/fixtures/unformatted_data"
+FORMATTED_DATA_DIR = "tests/fixtures/formatted_data"
 
 # Création des répertoires s'ils n'existent pas
 os.makedirs(UNFORMATTED_DATA_DIR, exist_ok=True)
 os.makedirs(FORMATTED_DATA_DIR, exist_ok=True)
 
 # Configuration de la journalisation
-logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s")
+
 
 class DataGouvFetcher(BaseFetcher):
     def fetch_discussions(self) -> Optional[List[Dict]]:
@@ -28,13 +29,13 @@ class DataGouvFetcher(BaseFetcher):
             logging.info(f"Fetched {len(data_json)} discussions from data.gouv.fr")
 
             # Enregistrement des données non formatées
-            self.save_json(data_json, f'{UNFORMATTED_DATA_DIR}/unformatted_data_gouv_discussions.json')
+            self.save_json(data_json, f"{UNFORMATTED_DATA_DIR}/unformatted_data_gouv_discussions.json")
 
             formatted_discussions = self.format_discussions(data_json)
 
             # Enregistrement des données formatées
-            self.save_json(formatted_discussions, f'{FORMATTED_DATA_DIR}/formatted_data_gouv_discussions.json')
-            
+            self.save_json(formatted_discussions, f"{FORMATTED_DATA_DIR}/formatted_data_gouv_discussions.json")
+
             return formatted_discussions
         except requests.RequestException as e:
             logging.error(f"Request error: {e}")
@@ -51,7 +52,7 @@ class DataGouvFetcher(BaseFetcher):
                 "title": discussion["title"],
                 "first_message": discussion["discussion"][0]["content"],
                 "url_discussion": discussion["url"],
-                "source": "data_gouv"
+                "source": "data_gouv",
             }
             formatted_discussions.append(formatted_discussion)
         return formatted_discussions
@@ -74,13 +75,13 @@ class DataGouvFetcher(BaseFetcher):
             logging.info(f"Fetched {len(datasets)} datasets from data.gouv.fr")
 
             # Enregistrement des données non formatées
-            self.save_json(datasets, f'{UNFORMATTED_DATA_DIR}/unformatted_data_gouv_datasets.json')
+            self.save_json(datasets, f"{UNFORMATTED_DATA_DIR}/unformatted_data_gouv_datasets.json")
 
             formatted_datasets = self.format_datasets(datasets)
-            
+
             # Enregistrement des données formatées
-            self.save_json(formatted_datasets, f'{FORMATTED_DATA_DIR}/formatted_data_gouv_datasets.json')
-            
+            self.save_json(formatted_datasets, f"{FORMATTED_DATA_DIR}/formatted_data_gouv_datasets.json")
+
             return formatted_datasets
         except requests.RequestException as e:
             logging.error(f"Request error while fetching datasets: {e}")
@@ -101,7 +102,7 @@ class DataGouvFetcher(BaseFetcher):
                 "resources_downloads": dataset["metrics"]["resources_downloads"],
                 "reuses": dataset["metrics"]["reuses"],
                 "views": dataset["metrics"]["views"],
-                "source": "data_gouv"
+                "source": "data_gouv",
             }
             formatted_datasets.append(formatted_dataset)
         return formatted_datasets
@@ -111,32 +112,26 @@ class DataEcoFetcher(BaseFetcher):
     def fetch_discussions(self) -> Optional[List[Dict]]:
         logging.info("Fetching discussions from data.economie.gouv.fr API :")
         all_data = []
-        params = {
-            "timezone": "UTC",
-            "include_links": "false",
-            "include_app_metas": "false",
-            "limit": 100,
-            "offset": 0
-        }
+        params = {"timezone": "UTC", "include_links": "false", "include_app_metas": "false", "limit": 100, "offset": 0}
         try:
             while True:
                 response = requests.get(self.discussions_url, headers=HEADERS, params=params)
                 response.raise_for_status()
                 data_json = response.json()
-                all_data.extend(data_json['results'])
-                if len(data_json['results']) < params["limit"]:
+                all_data.extend(data_json["results"])
+                if len(data_json["results"]) < params["limit"]:
                     break
                 params["offset"] += params["limit"]
             logging.info(f"Fetched {len(all_data)} discussions from DataEco")
 
             # Enregistrement des données non formatées
-            self.save_json(all_data, f'{UNFORMATTED_DATA_DIR}/unformatted_data_eco_discussions.json')
+            self.save_json(all_data, f"{UNFORMATTED_DATA_DIR}/unformatted_data_eco_discussions.json")
 
             formatted_discussions = self.format_discussions(all_data)
-            
+
             # Enregistrement des données formatées
-            self.save_json(formatted_discussions, f'{FORMATTED_DATA_DIR}/formatted_data_eco_discussions.json')
-            
+            self.save_json(formatted_discussions, f"{FORMATTED_DATA_DIR}/formatted_data_eco_discussions.json")
+
             return formatted_discussions
         except requests.RequestException as e:
             logging.error(f"Error fetching discussions: {e}")
@@ -154,7 +149,7 @@ class DataEcoFetcher(BaseFetcher):
                 "comment": discussion["commentaire"],
                 "created": discussion["horodatage"],
                 "username": discussion["username"],
-                "source": "data_eco"
+                "source": "data_eco",
             }
             formatted_discussions.append(formatted_discussion)
         return formatted_discussions
@@ -162,13 +157,7 @@ class DataEcoFetcher(BaseFetcher):
     def fetch_datasets(self) -> Optional[List[Dict]]:
         logging.info("Fetching datasets from data.economie.gouv.fr API :")
         all_data = []
-        params = {
-            "timezone": "UTC",
-            "include_links": "false",
-            "include_app_metas": "false",
-            "limit": 100,
-            "offset": 0
-        }
+        params = {"timezone": "UTC", "include_links": "false", "include_app_metas": "false", "limit": 100, "offset": 0}
         try:
             while True:
                 response = requests.get(self.datasets_url, headers=HEADERS, params=params)
@@ -181,15 +170,15 @@ class DataEcoFetcher(BaseFetcher):
             logging.info(f"Fetched {len(all_data)} datasets from DataEco")
 
             # Enregistrement des données non formatées
-            self.save_json(all_data, f'{UNFORMATTED_DATA_DIR}/unformatted_data_eco_datasets.json')
+            self.save_json(all_data, f"{UNFORMATTED_DATA_DIR}/unformatted_data_eco_datasets.json")
 
             formatted_datasets = self.format_datasets(all_data)
-            
+
             # Enregistrement des données formatées
-            self.save_json(formatted_datasets, f'{FORMATTED_DATA_DIR}/formatted_data_eco_datasets.json')
+            self.save_json(formatted_datasets, f"{FORMATTED_DATA_DIR}/formatted_data_eco_datasets.json")
 
             return formatted_datasets
-        
+
         except requests.RequestException as e:
             logging.error(f"Error fetching datasets: {e}")
             return None
@@ -199,14 +188,14 @@ class DataEcoFetcher(BaseFetcher):
         for dataset in datasets:
             metas_default = dataset.get("metas", {}).get("default", {})
             metas_dcat = dataset.get("metas", {}).get("dcat", {})
-            
+
             formatted_dataset = {
                 "dataset_id": dataset.get("dataset_id"),
                 "title": metas_default.get("title", "Unknown Title"),
                 "publisher": metas_default.get("publisher", "Unknown Publisher"),
                 "created_at": metas_dcat.get("created", "Unknown Created Date"),
                 "updated_at": metas_default.get("modified", "Unknown Modified Date"),
-                "source": "data_eco"
+                "source": "data_eco",
             }
             formatted_datasets.append(formatted_dataset)
         return formatted_datasets

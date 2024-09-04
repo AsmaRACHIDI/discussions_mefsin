@@ -49,6 +49,5 @@ class BaseFetcher(abc.ABC):
 
     def save_json(self, data: List[Dict], filepath: str):
         """Enregistre les données formatées dans un fichier JSON."""
-        with open(filepath, 'w', encoding='utf-8') as f:
+        with open(filepath, "w", encoding="utf-8") as f:
             json.dump(data, f, indent=4, ensure_ascii=False)
-
