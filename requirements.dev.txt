@@ -1,1 +1,9 @@
+# Ce fichier inclut les dépendances de prod et ajoute celles pour le développement
+
+-r requirements.prod.txt
+
+# Additional dependencies for development
+pytest==8.3.2
+#black
 click==8.1.7
+pre-commit==3.5.0

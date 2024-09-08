@@ -1,3 +1,13 @@
-nltk==3.8.1
-numpy==1.24.4
+# Ce fichier inclut les dépendances de dev et ajoute celles pour la data science
+
+-r requirements.dev.txt
+
+# Additional dependencies for data science
 pandas==2.0.3
+plotly==5.24.0
+nltk==3.8.1
+torch==2.4.1
+transformers==4.44.2
+tinydb==4.8.0
+#numpy==1.24.4
+#scikit-learn
