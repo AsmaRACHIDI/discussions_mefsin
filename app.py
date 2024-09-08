@@ -1,12 +1,8 @@
 import io
-import json
 import pandas as pd
-import plotly.express as px
 
 from flask import Flask, render_template, request, send_file, redirect, url_for
-from flask import jsonify
 from inference.inference_script import annotate_a_message
-from inference import categories
 
 
 app = Flask(__name__, template_folder="app/templates", static_folder='app/static')
