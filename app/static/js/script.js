@@ -38,19 +38,34 @@ const body = document.querySelector("body"),
       modeSwitch = body.querySelector(".toggle-switch"),
       modeText = body.querySelector(".mode-text");
 
-      toggle.addEventListener("click", () =>{
-        sidebar.classList.toggle("close")
-      });
-      searchBtn.addEventListener("click", () =>{
-        sidebar.classList.remove("close")
-      });
+// Vérifie l'état du mode sombre au chargement de la page
+document.addEventListener('DOMContentLoaded', function() {
+  const darkMode = localStorage.getItem('darkMode') === 'true';
 
-      modeSwitch.addEventListener("click", () =>{
-        body.classList.toggle("dark");
+  if (darkMode) {
+      body.classList.add('dark');
+      modeText.innerText = "Light Mode";
+  } else {
+      modeText.innerText = "Dark Mode";
+  }
+});
 
-        if(body.classList.contains("dark")){
-            modeText.innerText = "Light Mode"
-        }else{
-            modeText.innerText = "Dark Mode"
-        }
-      });
+// Fonctionnalités des boutons
+toggle.addEventListener("click", () => {
+  sidebar.classList.toggle("close");
+});
+
+searchBtn.addEventListener("click", () => {
+  sidebar.classList.remove("close");
+});
+
+modeSwitch.addEventListener("click", () => {
+  body.classList.toggle("dark");
+  const isDarkMode = body.classList.contains("dark");
+
+  // Met à jour le texte du mode
+  modeText.innerText = isDarkMode ? "Light Mode" : "Dark Mode";
+  
+  // Sauvegarde l'état du mode sombre dans localStorage
+  localStorage.setItem('darkMode', isDarkMode);
+});
