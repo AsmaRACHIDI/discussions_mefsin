@@ -34,13 +34,7 @@
                     var labels = [];
                     var parents = [];
                     var values = [];
-
-                    // Ajouter les catégories avec leur compteur
-                    Object.keys(categoryCounts).forEach(function(category) {
-                        labels.push(category);
-                        parents.push('');
-                        values.push(categoryCounts[category]);
-                    });
+                    var textInfo = [];
 
                     // Ajouter les sous-catégories avec leur compteur
                     Object.keys(subcategoryCounts).forEach(function(subcategory) {
@@ -51,6 +45,15 @@
                         }).prediction_motif;
                         parents.push(parentCategory);
                         values.push(subcategoryCounts[subcategory]);
+                        textInfo.push(subcategoryCounts[subcategory]);
+                    });
+
+                    // Ajouter les catégories avec une valeur 0 pour que la taille soit uniquement basée sur leurs sous-catégories
+                    Object.keys(categoryCounts).forEach(function(category) {
+                        labels.push(category);
+                        parents.push('');
+                        values.push(0); // Mettre la valeur à 0, la taille sera uniquement basée sur leurs sous-catégories
+                        textInfo.push(categoryCounts[category]); // Utiliser la valeur réelle des catégories dans textInfo
                     });
 
                     // Créer la treemap avec Plotly.js
@@ -59,7 +62,12 @@
                         labels: labels,
                         parents: parents,
                         values: values,
-                        textinfo: 'label+value',
+                        text: textInfo,  // Utiliser textInfo pour afficher les valeurs
+                        textinfo: 'label+text',  // Afficher à la fois les labels et les valeurs de textInfo
+                        hoverinfo: 'label+text',
+                        tiling: {
+                            packing: 'squarify'  // Essayez aussi d'autres méthodes comme 'binary' ou 'slice'
+                        }
                     }];
 
                     var layout = {
@@ -81,6 +89,7 @@
                             height: window.innerHeight * 0.8 // Mettre à jour la hauteur en fonction de la fenêtre
                         });
                     });
+
 
                 // BAR-CHART - Top des problèmes rencontrés //
                 var problemCounts = {};
