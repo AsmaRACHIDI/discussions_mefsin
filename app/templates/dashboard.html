@@ -64,20 +64,39 @@
                         values: values,
                         text: textInfo,  // Utiliser textInfo pour afficher les valeurs
                         textinfo: 'label+text',  // Afficher à la fois les labels et les valeurs de textInfo
+                        textfont: {
+                            family: 'Arial, sans-serif',  // Police de caractères
+                            size: 14,  // Taille de la police
+                            color: 'white'  // Couleur du texte
+                        },
+                        textposition: 'center',
                         hoverinfo: 'label+text',
+                        hoverlabel: {
+                            font: {
+                                color: 'white'  // Couleur du texte de l'étiquette de survol
+                            },
+                            align: 'center',
+                            bordercolor: 'black',  // Couleur de la bordure (optionnel, dépend de la version de Plotly.js)
+                            borderwidth: 2     // Largeur de la bordure (optionnel, dépend de la version de Plotly.js)
+                        },
                         tiling: {
                             packing: 'squarify'  // Essayez aussi d'autres méthodes comme 'binary' ou 'slice'
                         }
                     }];
 
                     var layout = {
+                        paper_bgcolor: '#f5f5f5',
                         margin: { t: 60, l: 0, r: 0, b: 0 }, // Ajouter une marge supérieure pour le titre
                         title: {
                             text: "Mosaïque des discussions : Visualisation de l'importance des problèmes rencontrés par catégorie",
                             x: 0.5, // Centrer le titre
                             xanchor: 'center', // Ancrage du titre au centre
                             y: 0.95, // Position verticale du titre
-                        }
+                            font: {
+                                size: 14, // Réduire la taille de la police
+                            }
+                        },
+                        autosize: true,
                     };
 
                     Plotly.newPlot('treemap', treemapData, layout);
