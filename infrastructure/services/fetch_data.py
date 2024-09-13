@@ -189,12 +189,15 @@ class DataEcoFetcher(BaseFetcher):
             metas_default = dataset.get("metas", {}).get("default", {})
             metas_dcat = dataset.get("metas", {}).get("dcat", {})
 
+            dataset_id = dataset.get("dataset_id")
+            
             formatted_dataset = {
                 "dataset_id": dataset.get("dataset_id"),
                 "title": metas_default.get("title", "Unknown Title"),
                 "publisher": metas_default.get("publisher", "Unknown Publisher"),
                 "created_at": metas_dcat.get("created", "Unknown Created Date"),
                 "updated_at": metas_default.get("modified", "Unknown Modified Date"),
+                "url": f"https://data.economie.gouv.fr/explore/dataset/{dataset_id}",
                 "source": "data_eco",
             }
             formatted_datasets.append(formatted_dataset)
