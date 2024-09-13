@@ -42,13 +42,14 @@ body.dark {
     --primary-color: #3A3B3C;
     --primary-color-light: #3A3B3C;
     --toggle-color: #FFF;
-    --text-color: #CCC;
+    --text-color: #DDD;
 }
 
 /* Add this CSS rule within the dark mode section */
 body.dark .table-container table tbody tr {
     background-color: #DDD;
 }
+
 
 /* Ajoutez cette règle CSS pour modifier la couleur du texte à l'exterieur du dataset */
 body.dark .dt-column-title {
@@ -370,13 +371,13 @@ body.dark .result-box {
 }
 
 body.dark .card-header {
-    background-color: #333 !important;
+    background-color: #555 !important;
     color: #FFF !important;
 }
 
 body.dark .card-body {
     background-color: #333;
-    color: #FFF; /* Texte blanc dans le corps de la carte */
+    box-shadow: 0 2px 5px #555;
 }
 
 body.dark .category-label,
@@ -405,7 +406,7 @@ body.dark .button:hover {
 
 form {
     max-width: 600px;
-    margin: 20px auto;
+    margin: 110px auto;
     background-color: #fff; /* Fond blanc pour le formulaire en mode clair */
     padding: 20px;
     border-radius: 5px;
@@ -448,25 +449,56 @@ input[type="submit"] {
     width: 100%;
 }
 
+
 input[type="submit"]:hover {
-    background-color: #1c3d64; /* Nouvelle couleur de fond au survol */
+    background-color: #234f85; /* Nouvelle couleur de fond au survol */
+}
+
+/* Mode sombre pour le bouton submit */
+body.dark input[type="submit"] {
+    background-color: #444; /* Couleur de fond sombre pour le bouton */
+    color: #FFF; /* Couleur du texte en blanc */
+    border: 1px solid #555; /* Bordure plus claire pour contraster avec le fond */
+}
+
+body.dark input[type="submit"]:hover {
+    background-color: #555; /* Fond légèrement plus clair au survol */
+}
+
+/* Mode sombre pour l'input text */
+body.dark input[type="text"],
+body.dark input[type="title"] {
+    background-color: #333; /* Couleur de fond sombre pour l'input */
+    color: #FFF; /* Couleur du texte en blanc */
+    border: 1px solid #555; /* Bordure plus claire pour contraster avec le fond */
+}
+
+/* Mode sombre pour le textarea */
+body.dark textarea {
+    background-color: #333; /* Couleur de fond sombre pour le textarea */
+    color: #FFF; /* Couleur du texte en blanc */
+    border: 1px solid #555; /* Bordure plus claire pour contraster avec le fond */
 }
 
 /* RESULT SANDBOX */  
 
 .result-box {
     background-color: #fff;
-    border: 1px solid #ddd;
-    border-radius: 16px;
+    display: flex;
+    flex-direction: column; /* Changer la direction en colonne pour empiler les éléments verticalement */
+    gap: 20px; /* Espace de 20px entre chaque élément en vertical */
     padding: 20px;
     margin: 20px auto;
-    max-width: 700px;
+    max-width: 90% !important;
+    width: 900px !important;
     text-align: center;
 }
 
+
 .card {
     text-align: left;
-    margin-bottom: 35px;
+    border: none !important;
+    box-shadow: none !important;
 }
 
 .card-header {
@@ -479,24 +511,29 @@ input[type="submit"]:hover {
 
 .card-body {
     background-color: #fff;
+    /* border: 1px solid #ddd;
+    border-radius: 10px; */
+    padding: 20px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
     text-align: left;
-    min-height: 100px;
-    padding-top: 20px;
+    min-height: 10px;
+    padding-top: 20px !important;
+    color: #333;
 }
 
 .category-label,
 .subcategory-label {
     font-weight: bold;
     color: #173252;
-    padding-top: 20px; /* Espacement interne pour les labels */
+    padding-top: 5px; /* Espacement interne pour les labels */
     display: block; /* Affichage en ligne pour que le fond s'adapte à la largeur du texte */
-    margin-top: 0; /* Enlever la marge supérieure */
-    padding-left: 16px;
+    /* margin-top: 0; Enlever la marge supérieure */
+    padding-left: 10px;
 }
 
 .subcategory-content {
-    padding-bottom: 5px; /* Espacement interne pour les labels */
-    padding-left: 20px;
+    padding-bottom: 0px; /* Espacement interne pour les labels */
+    padding-left: 25px;
     color: black;
 }
 
@@ -505,8 +542,15 @@ input[type="submit"]:hover {
     border: 2px solid #ddd;
     border-radius: 16px;
     padding: 10px;
-    margin-bottom: 16px; /* Espacement entre chaque boîte d'information */
-    display: block; /* Définir les boîtes comme blocs pour qu'elles soient empilées verticalement */
+    /* margin-bottom: 16px; Espacement entre chaque boîte d'information */
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); /* Ombre légère */
+    display: block; /* Empilement vertical */
+    transition: all 0.3s ease-in-out; /* Transition douce */
+}
+
+/* Ajoute un espace entre les boîtes successives */
+.info-box + .info-box {
+    margin-top: 16px; /* Ajoute un espace au-dessus du deuxième info-box */
 }
 
 .button {
@@ -521,10 +565,12 @@ input[type="submit"]:hover {
     display: flex;
     margin: 0 auto; /* Centre horizontalement */
     max-width: fit-content; /* Limite la largeur au contenu */
+    margin-bottom: 30px; /* Ajoute de l'espace sous le bouton */
+    margin-top: 30px;
 }
 
 .button:hover {
-    background-color: #1c3d64;
+    background-color: #234f85;
 }
 
 /* ======================*/
@@ -535,7 +581,6 @@ input[type="submit"]:hover {
     margin: 30px;
     margin-top: 50px;
     flex: 1; /* Ensures this container takes up remaining space */
-    padding-bottom: 20px; /* Adds padding at the bottom */
 }
 
 #treemap-container {
