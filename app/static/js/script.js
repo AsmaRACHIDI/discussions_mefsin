@@ -69,3 +69,35 @@ modeSwitch.addEventListener("click", () => {
   // Sauvegarde l'état du mode sombre dans localStorage
   localStorage.setItem('darkMode', isDarkMode);
 });
+
+
+// Script qui désactive le bouton après clic et affiche un indicateur de chargement pour le boutton "submit" de sandbox-form
+document.addEventListener("DOMContentLoaded", function() {
+    const form = document.querySelector('form');
+    // const submitButton = form.querySelector('input[type="submit"]');
+    const submitButton = document.getElementById('submitButton');
+
+    // Fonction pour réinitialiser le bouton
+    function resetSubmitButton() {
+      submitButton.disabled = false;
+      submitButton.value = "Soumettre";
+    }
+
+    // Gestion de la soumission du formulaire
+    form.addEventListener('submit', function() {
+      submitButton.disabled = true;
+      submitButton.value = "Traitement...";
+    });
+
+    // Réinitialisation du bouton lorsque la page devient visible
+    // Il faut s'assurer ici que l'état du bouton est correctement réinitialisé lorsque la page est revisitée sans être rechargée. (page reste enn cache navigateur)
+    document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') {
+          resetSubmitButton();
+      }
+    });
+
+    // Réinitialiser le bouton au chargement de la page
+    resetSubmitButton();
+});
+
