@@ -7,7 +7,6 @@ os.makedirs("data/raw", exist_ok=True)
 
 
 class Config:
-    SECRET_KEY = os.getenv("SECRET_KEY")
     TINYDB_PATH = os.getenv("TINYDB_PATH", "data/raw/tinydb.json")
     API_KEY = os.getenv("API_KEY")
     DATA_GOUV_DISCUSSIONS_URL = "https://www.data.gouv.fr/api/1/organizations/ministere-de-leconomie-des-finances-et-de-la-souverainete-industrielle-et-numerique/discussions"
