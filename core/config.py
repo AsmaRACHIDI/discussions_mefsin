@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 os.makedirs("data/raw", exist_ok=True)
-os.makedirs("trained_models/", exist_ok=True)
+# os.makedirs("trained_models/", exist_ok=True)
 
 class Config:
     TINYDB_PATH = os.getenv("TINYDB_PATH", "data/raw/tinydb.json")
