@@ -12,6 +12,23 @@ from src.format import append_to_csv
 from scripts.update_data import create_message, process_and_store_data
 from unittest.mock import patch
 
+import subprocess
+
+SAMPLES_DATA_DIR = 'tests/fixtures/samples_data'
+
+def ensure_samples_data():
+    if not all(os.path.exists(os.path.join(SAMPLES_DATA_DIR, file)) for file in [
+        'sample_data_gouv_discussions.json',
+        'sample_data_gouv_datasets.json',
+        'sample_data_eco_discussions.json',
+        'sample_data_eco_datasets.json'
+    ]):
+        subprocess.run(['python', 'fetch_samples_data.py'], check=True)
+
+@pytest.fixture(scope="session", autouse=True)
+def setup_sample_data():
+    ensure_samples_data()
+    
 
 @pytest.fixture
 def tinydb_repository():
