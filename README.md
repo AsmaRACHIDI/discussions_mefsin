@@ -69,28 +69,34 @@ pip install -r requirements.ds.txt
 ### 4. Télécharger les modèles d'IA pré-entraînés
 Créez un dossier `trained_models` à la racine du projet et téléchargez les poids des modèles pré-entraînés **CamemBERT** :
 ```bash
+# Créez un dossier `trained_models` à la racine du projet
 mkdir trained_models
+
+# Entrez dans le dossier
 cd trained_models
-wget https://huggingface.co/BercyHub/CamemBERT_classification_discussions/blob/main/bert-finetuned-my-data-final_archive.zip
-wget https://huggingface.co/BercyHub/CamemBERT_classification_discussions/blob/main/bert-finetuned-my-data-final2_archive2.zip
+
+# Téléchargez les poids des modèles pré-entraînés CamemBERT
+# Zip Modèle 1 :
+wget https://huggingface.co/BercyHub/CamemBERT_classification_discussions/resolve/main/bert-finetuned-my-data-final_archive.zip
+# Zip Modèle 2 :
+wget https://huggingface.co/BercyHub/CamemBERT_classification_discussions/resolve/main/bert-finetuned-my-data-final2_archive2.zip
 ```
 
-## Utilisation
-### Lancer l'Application
-Pour lancer l'application front-end (tableau de bord) :
-```bash
-python app.py
-```
-
-### Mise à jour des données
-Pour mettre à jour les données à partir des sources API, exécutez :
+### Récupérer ou Mettre à jour des données
+Pour récupérer ou mettre à jour les données à partir des sources API, depuis la racine du projet, exécutez :
 ```bash
 make update_data
 ```
 
 ### Ce que Fait `update_data.py`
-
 Le script `update_data.py` récupère les dernières données depuis les APIs ([data.gouv.fr](https://www.data.gouv.fr/fr/) et [data.economie.gouv.fr](https://data.economie.gouv.fr/pages/accueil/)), les formate et les stocke dans la base de données locale.
+
+## Utilisation
+### Lancer l'Application
+Pour lancer l'application front-end (tableau de bord), depuis la racine du projet, exécutez :
+```bash
+python app.py
+```
 
 ## Exécuter les Tests
 ### Tests des Fetchers
