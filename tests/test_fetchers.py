@@ -64,11 +64,8 @@ def load_json_fixture(filename):
 
 # Fetch data
 def test_fetch_discussions_data_gouv(fetcher_data_gouv):
-    discussions = fetcher_data_gouv.fetch_discussions()
 
-    print("Fetched discussions from data_gouv:")
-    for discussion in discussions:
-        print(discussion)
+    discussions = fetcher_data_gouv.fetch_discussions()
 
     assert len(discussions) > 0, "Expected to fetch at least one discussion"
     assert all(
@@ -77,22 +74,16 @@ def test_fetch_discussions_data_gouv(fetcher_data_gouv):
 
 
 def test_fetch_datasets_data_gouv(fetcher_data_gouv):
-    datasets = fetcher_data_gouv.fetch_datasets()
 
-    print("Fetched datasets from data_gouv:")
-    for dataset in datasets:
-        print(dataset)
+    datasets = fetcher_data_gouv.fetch_datasets()
 
     assert len(datasets) > 0, "Expected to fetch at least one dataset"
     assert all("dataset_id" in dataset for dataset in datasets), "Each dataset should have a dataset_id"
 
 
 def test_fetch_discussions_data_eco(fetcher_data_eco):
-    discussions = fetcher_data_eco.fetch_discussions()
 
-    print("Fetched discussions from data_eco:")
-    for discussion in discussions:
-        print(discussion)
+    discussions = fetcher_data_eco.fetch_discussions()
 
     assert len(discussions) > 0, "Expected to fetch at least one discussion"
     assert all(
@@ -101,11 +92,8 @@ def test_fetch_discussions_data_eco(fetcher_data_eco):
 
 
 def test_fetch_datasets_data_eco(fetcher_data_eco):
-    datasets = fetcher_data_eco.fetch_datasets()
 
-    print("Fetched datasets from data_eco:")
-    for dataset in datasets:
-        print(dataset)
+    datasets = fetcher_data_eco.fetch_datasets()
 
     assert len(datasets) > 0, "Expected to fetch at least one dataset"
     assert all("dataset_id" in dataset for dataset in datasets), "Each dataset should have a dataset_id"
