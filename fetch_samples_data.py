@@ -17,7 +17,6 @@ def fetch_and_save_samples():
         data_eco_fetcher = APIFetcherManager.get_client("data_eco")
 
         # Fetch DataGouv samples
-        logging.info("Fetching discussions from DataGouv...")
         data_gouv_discussions = data_gouv_fetcher.fetch_discussions()
         if data_gouv_discussions:
             sample_data_gouv_discussions = data_gouv_discussions[:2]  # Récupérer les deux premiers échantillons
@@ -26,7 +25,6 @@ def fetch_and_save_samples():
         else:
             logging.warning("No discussions fetched from DataGouv")
 
-        logging.info("Fetching datasets from DataGouv...")
         data_gouv_datasets = data_gouv_fetcher.fetch_datasets()
         if data_gouv_datasets:
             sample_data_gouv_datasets = data_gouv_datasets[:2]  # Récupérer les deux premiers échantillons
@@ -36,7 +34,6 @@ def fetch_and_save_samples():
             logging.warning("No datasets fetched from DataGouv")
 
         # Fetch DataEco samples
-        logging.info("Fetching discussions from DataEco...")
         data_eco_discussions = data_eco_fetcher.fetch_discussions()
         if data_eco_discussions:
             sample_data_eco_discussions = data_eco_discussions[:2]  # Récupérer les deux premiers échantillons
@@ -45,7 +42,6 @@ def fetch_and_save_samples():
         else:
             logging.warning("No discussions fetched from DataEco")
 
-        logging.info("Fetching datasets from DataEco...")
         data_eco_datasets = data_eco_fetcher.fetch_datasets()
         if data_eco_datasets:
             sample_data_eco_datasets = data_eco_datasets[:2]  # Récupérer les deux premiers échantillons
