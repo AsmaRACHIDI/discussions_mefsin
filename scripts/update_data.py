@@ -10,6 +10,7 @@ from infrastructure.repositories.tinydb_comment_repository import TinyDBCommentR
 from src.format import dump_json
 from inference.inference_script import annotate_a_message
 
+os.makedirs("app/static/data", exist_ok=True)
 
 def fetch_and_format_data(api_type):
     fetcher = APIFetcherManager.get_client(api_type)
