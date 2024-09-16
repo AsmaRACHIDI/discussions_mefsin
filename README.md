@@ -69,16 +69,17 @@ pip install -r requirements.ds.txt
 ### 4. Télécharger les modèles d'IA pré-entraînés
 Créez un dossier `trained_models` à la racine du projet et téléchargez les poids des modèles pré-entraînés **CamemBERT** :
 ```bash
-# Créez un dossier `trained_models` à la racine du projet
 mkdir trained_models
-
-# Entrez dans le dossier
+```
+```bash
 cd trained_models
-
-# Téléchargez les poids des modèles pré-entraînés CamemBERT
-# Zip Modèle 1 :
+```
+- Zip Modèle 1 (Catégories) :
+```bash
 wget https://huggingface.co/BercyHub/CamemBERT_classification_discussions/resolve/main/bert-finetuned-my-data-final_archive.zip
-# Zip Modèle 2 :
+```
+- Zip Modèle 2 (Sous-Catégories) :
+```bash
 wget https://huggingface.co/BercyHub/CamemBERT_classification_discussions/resolve/main/bert-finetuned-my-data-final2_archive2.zip
 ```
 
