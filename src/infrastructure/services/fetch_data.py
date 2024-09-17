@@ -1,10 +1,9 @@
 import requests
 import logging
 import os
-from domain.gateways import BaseFetcher
+from src.domain.gateways import BaseFetcher
 from typing import List, Dict, Optional
-from core.config import Config
-import json
+from src.core.config import Config
 
 HEADERS = {"Authorization": f"Apikey {Config.API_KEY}"}
 
@@ -190,7 +189,7 @@ class DataEcoFetcher(BaseFetcher):
             metas_dcat = dataset.get("metas", {}).get("dcat", {})
 
             dataset_id = dataset.get("dataset_id")
-            
+
             formatted_dataset = {
                 "dataset_id": dataset.get("dataset_id"),
                 "title": metas_default.get("title", "Unknown Title"),

@@ -1,6 +1,6 @@
 import csv
 import os
-from infrastructure.repositories.tinydb_comment_repository import TinyDBCommentRepository
+from src.infrastructure.repositories.tinydb_comment_repository import TinyDBCommentRepository
 
 
 def json_to_csv(json_data, csv_file_path):

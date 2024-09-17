@@ -3,11 +3,11 @@ import json
 import os
 import csv
 
-from core.config import Config
+from src.core.config import Config
 from tinydb import TinyDB
 from tinydb.storages import MemoryStorage
-from domain.models import Message
-from infrastructure.repositories.tinydb_comment_repository import TinyDBCommentRepository
+from src.domain import Message
+from src.infrastructure.repositories.tinydb_comment_repository import TinyDBCommentRepository
 from src.format import append_to_csv
 from scripts.update_data import create_message, process_and_store_data
 from unittest.mock import patch
@@ -28,7 +28,7 @@ def ensure_samples_data():
 @pytest.fixture(scope="session", autouse=True)
 def setup_sample_data():
     ensure_samples_data()
-    
+
 
 @pytest.fixture
 def tinydb_repository():

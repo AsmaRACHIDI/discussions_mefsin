@@ -1,7 +1,7 @@
 import abc
 import json
 from typing import List, Dict, Optional
-from domain.models import Message
+from src.domain.models import Message
 
 
 class AbstractCommentRepository(abc.ABC):

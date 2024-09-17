@@ -4,9 +4,9 @@ import os
 # Ajouter le répertoire parent au sys.path
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
-from infrastructure.services.api_fetcher_manager import APIFetcherManager
-from domain.models import Message
-from infrastructure.repositories.tinydb_comment_repository import TinyDBCommentRepository
+from src.infrastructure.services.api_fetcher_manager import APIFetcherManager
+from src.domain import Message
+from src.infrastructure.repositories.tinydb_comment_repository import TinyDBCommentRepository
 from src.format import dump_json
 from inference.inference_script import annotate_a_message
 

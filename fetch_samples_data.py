@@ -1,7 +1,6 @@
 import os
 import logging
-from infrastructure.services.api_fetcher_manager import APIFetcherManager
-from core.config import Config
+from src.infrastructure.services.api_fetcher_manager import APIFetcherManager
 
 # Configuration de la journalisation
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')

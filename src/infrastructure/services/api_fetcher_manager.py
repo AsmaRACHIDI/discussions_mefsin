@@ -1,7 +1,7 @@
 # Gestion des Fetchers
-from domain.gateways import BaseFetcher
-from infrastructure.services.fetch_data import DataGouvFetcher, DataEcoFetcher
-from core.config import Config
+from src.domain.gateways import BaseFetcher
+from src.infrastructure.services.fetch_data import DataGouvFetcher, DataEcoFetcher
+from src.core.config import Config
 
 
 class APIFetcherManager:

@@ -1,8 +1,8 @@
 from typing import List, Dict, Optional
-from tinydb import TinyDB, Query, where
-from domain.gateways import AbstractCommentRepository
-from domain.models import Message
-from core.config import Config
+from tinydb import TinyDB, Query
+from src.domain.gateways import AbstractCommentRepository
+from src.domain.models import Message
+from src.core.config import Config
 
 
 class TinyDBCommentRepository(AbstractCommentRepository):

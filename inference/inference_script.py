@@ -1,4 +1,3 @@
-import os
 import sys
 import zipfile
 
@@ -10,7 +9,7 @@ sys.path.append("/home/oem/Documents/open-data-discussions")
 
 from inference.preprocess import preprocess_data
 from inference import categories
-from core.config import Config
+from src.core.config import Config
 
 # Accédez aux dictionnaires définis dans categories.py
 labels = categories.LABELS

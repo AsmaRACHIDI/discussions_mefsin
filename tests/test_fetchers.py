@@ -1,8 +1,8 @@
 import pytest
 import json
-from infrastructure.services.api_fetcher_manager import APIFetcherManager
-from infrastructure.services.fetch_data import DataGouvFetcher
-from infrastructure.services.fetch_data import DataEcoFetcher
+from src.infrastructure.services.api_fetcher_manager import APIFetcherManager
+from src.infrastructure.services.fetch_data import DataGouvFetcher
+from src.infrastructure.services.fetch_data import DataEcoFetcher
 
 
 @pytest.fixture

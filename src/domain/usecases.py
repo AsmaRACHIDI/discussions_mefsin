@@ -1,6 +1,6 @@
-from domain.models import Message
-from domain.gateways import AbstractCommentRepository
-from infrastructure.services.api_fetcher_manager import APIFetcherManager
+from src.domain.models import Message
+from src.domain.gateways import AbstractCommentRepository
+from src.infrastructure.services.api_fetcher_manager import APIFetcherManager
 from typing import Dict
 
 
