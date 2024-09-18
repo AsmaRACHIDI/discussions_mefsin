@@ -5,7 +5,7 @@ import os
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
 from src.infrastructure.services.api_fetcher_manager import APIFetcherManager
-from src.domain import Message
+from src.domain.models import Message
 from src.infrastructure.repositories.tinydb_comment_repository import TinyDBCommentRepository
 from src.format import dump_json
 from inference.inference_script import annotate_a_message
