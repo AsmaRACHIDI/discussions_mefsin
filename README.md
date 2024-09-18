@@ -50,7 +50,46 @@ Copiez le fichier .env.sample et modifiez-le selon vos besoins (renseigner votre
 cp .env.sample .env
 ```
 
-### 3. Installer les dépendances
+### 3. Créer un environnement virtuel
+Avant d'installer les dépendances, créez un environnement virtuel pour isoler vos paquets Python. Vous avez deux options : utiliser venv ou virtualenv.
+
+**Option 1 :** Utiliser `venv` (recommandé pour Python 3.3+)
+```bash
+python3 -m venv venv
+````
+Activez l'environnement virtuel :
+- Sur **Linux/MacOS** :
+```bash
+source venv/bin/activate
+```
+- Sur **Windows** :
+```bash
+.\venv\Scripts\activate
+```
+**Option 2 :** Utiliser `virtualenv` (compatible avec Python 2 et 3)
+1. Installez pip si ce n'est pas déjà fait :
+```bash
+sudo apt-get install python3-pip
+```
+2. Installez `virtualenv` :
+```bash
+pip install virtualenv
+```
+3. Créez un environnement virtuel :
+```bash
+virtualenv venv
+```
+4. Activez l'environnement virtuel :
+- Sur **Linux/MacOS** :
+```bash
+source venv/bin/activate
+```
+- Sur **Windows** :
+```bash
+.\venv\Scripts\activate
+```
+
+### 4. Installer les dépendances
 Installez les dépendances nécessaires en fonction de l'environnement souhaité :
 
 - Environnement de `Développement`:
@@ -66,7 +105,7 @@ pip install -r requirements.prod.txt
 pip install -r requirements.ds.txt
 ```
 
-### 4. Télécharger les modèles d'IA pré-entraînés
+### 5. Télécharger les modèles d'IA pré-entraînés
 Créez un dossier `trained_models` à la racine du projet et téléchargez les poids des modèles pré-entraînés **CamemBERT** :
 ```bash
 mkdir trained_models
@@ -83,7 +122,7 @@ wget https://huggingface.co/BercyHub/CamemBERT_classification_discussions/resolv
 wget https://huggingface.co/BercyHub/CamemBERT_classification_discussions/resolve/main/bert-finetuned-my-data-final2_archive2.zip
 ```
 
-### Récupérer ou Mettre à jour des données
+## Récupérer ou Mettre à jour les données
 Pour récupérer ou mettre à jour les données à partir des sources API, depuis la racine du projet, exécutez :
 ```bash
 make update_data
