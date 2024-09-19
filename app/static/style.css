@@ -607,3 +607,34 @@ body.dark textarea {
 #bar-chart-discussions {
     width: 100%; /* Make sure the chart container takes full width */
 }
+
+
+/* Style filtre Dashboard directions métier */
+.filters label {
+    font-weight: bold;
+    font-size: 16px;
+    color: #333;
+    margin-right: 10px;
+}
+
+.filters select {
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+    background-color: #f5f5f5;
+    color: #333;
+    outline: none;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.filters select:focus {
+    border: 1px solid #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.filters {
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+}

@@ -5,212 +5,220 @@
 {% block content %}
     {% include 'sidebar.html' %}
 
-    <!-- <img src="/static/images/logo.png" alt="Logo" class="logo"> -->
-    
     <section class="dashboard">
-        <div class="text">Présentation des données annotées par le modèle d'IA</div>
-        <div class="table-container">      
-            <div id="treemap" class="graph-container"></div>
-            <script>
-                // Charger les données JSON à partir du fichier local
-                d3.json("/static/data/test.json").then(function(data) {
-                    // Initialiser les compteurs pour chaque catégorie et sous-catégorie
-                    var categoryCounts = {};
-                    var subcategoryCounts = {};
-                    var datasetCounts = {};
+        <div class="text">Présentation des données annotées par le modèle d'IA</div>      
 
-                    // Compter le nombre d'occurrences de chaque catégorie, sous-catégorie, et jeu de données
-                    data.forEach(function(d) {
+        <div class="table-container">
+            <div class="filters">
+                <label for="publisher-filter">Filtrer par Direction métier :</label>
+                <select id="publisher-filter" class="custom-select">
+                    <option value="all">Toutes les directions métier</option>
+                </select>
+            </div>  
+            <div id="treemap" class="graph-container"></div>
+            <div id="bar-chart-problemes" class="graph-container"></div>
+            <div id="bar-chart-discussions" class="graph-container"></div>
+        </div>
+
+        <script>
+            // Charger les données JSON à partir du fichier local
+            d3.json("/static/data/test.json").then(function(data) {
+                var publisherCounts = {};
+                var publishers = new Set();
+
+                // Initialiser les publisher
+                data.forEach(function(d) {
+                    var publisher = d.dataset_publisher;
+                    publisherCounts[publisher] = (publisherCounts[publisher] || 0) + 1;
+                    publishers.add(publisher);
+                });
+
+                // Remplir le filtre publisher
+                publishers.forEach(function(publisher) {
+                    var option = document.createElement("option");
+                    option.value = publisher;
+                    option.text = publisher;
+                    document.getElementById("publisher-filter").appendChild(option);
+                });
+
+                // Fonction pour mettre à jour les graphiques en fonction du filtre
+                function updateGraphs() {
+                    var selectedPublisher = document.getElementById("publisher-filter").value;
+
+                    var filteredData = data.filter(function(d) {
+                        return selectedPublisher === "all" || d.dataset_publisher === selectedPublisher;
+                    });
+
+                    var updatedCategoryCounts = {};
+                    var updatedSubcategoryCounts = {};
+                    var updatedDatasetCounts = {};
+
+                    filteredData.forEach(function(d) {
                         var category = d.prediction_motif;
                         var subcategory = d.prediction_sous_motif;
                         var dataset = d.dataset_title;
 
-                        categoryCounts[category] = (categoryCounts[category] || 0) + 1;
-                        subcategoryCounts[subcategory] = (subcategoryCounts[subcategory] || 0) + 1;
-                        datasetCounts[dataset] = (datasetCounts[dataset] || 0) + 1;
+                        updatedCategoryCounts[category] = (updatedCategoryCounts[category] || 0) + 1;
+                        updatedSubcategoryCounts[subcategory] = (updatedSubcategoryCounts[subcategory] || 0) + 1;
+                        updatedDatasetCounts[dataset] = (updatedDatasetCounts[dataset] || 0) + 1;
                     });
 
-                    // Préparer les données pour la treemap
+                    // Mettre à jour la treemap
                     var labels = [];
                     var parents = [];
                     var values = [];
                     var textInfo = [];
 
-                    // Ajouter les sous-catégories avec leur compteur
-                    Object.keys(subcategoryCounts).forEach(function(subcategory) {
+                    Object.keys(updatedSubcategoryCounts).forEach(function(subcategory) {
                         labels.push(subcategory);
-                        // Récupérer la catégorie parente de chaque sous-catégorie
-                        var parentCategory = data.find(function(d) {
+                        var parentCategory = filteredData.find(function(d) {
                             return d.prediction_sous_motif === subcategory;
                         }).prediction_motif;
                         parents.push(parentCategory);
-                        values.push(subcategoryCounts[subcategory]);
-                        textInfo.push(subcategoryCounts[subcategory]);
+                        values.push(updatedSubcategoryCounts[subcategory]);
+                        textInfo.push(updatedSubcategoryCounts[subcategory]);
                     });
 
-                    // Ajouter les catégories avec une valeur 0 pour que la taille soit uniquement basée sur leurs sous-catégories
-                    Object.keys(categoryCounts).forEach(function(category) {
+                    Object.keys(updatedCategoryCounts).forEach(function(category) {
                         labels.push(category);
                         parents.push('');
-                        values.push(0); // Mettre la valeur à 0, la taille sera uniquement basée sur leurs sous-catégories
-                        textInfo.push(categoryCounts[category]); // Utiliser la valeur réelle des catégories dans textInfo
+                        values.push(0);
+                        textInfo.push(updatedCategoryCounts[category]);
                     });
 
-                    // Créer la treemap avec Plotly.js
-                    var treemapData = [{
+                    Plotly.react('treemap', [{
                         type: 'treemap',
                         labels: labels,
                         parents: parents,
                         values: values,
-                        text: textInfo,  // Utiliser textInfo pour afficher les valeurs
-                        textinfo: 'label+text',  // Afficher à la fois les labels et les valeurs de textInfo
+                        text: textInfo,
+                        textinfo: 'label+text',
                         textfont: {
-                            family: 'Arial, sans-serif',  // Police de caractères
-                            size: 14,  // Taille de la police
-                            color: 'white'  // Couleur du texte
+                            family: 'Arial, sans-serif',
+                            size: 14,
+                            color: 'white'
                         },
                         textposition: 'center',
                         hoverinfo: 'label+text',
                         hoverlabel: {
                             font: {
-                                color: 'white'  // Couleur du texte de l'étiquette de survol
+                                color: 'white'
                             },
                             align: 'center',
-                            bordercolor: 'black',  // Couleur de la bordure (optionnel, dépend de la version de Plotly.js)
-                            borderwidth: 2     // Largeur de la bordure (optionnel, dépend de la version de Plotly.js)
+                            bordercolor: 'black',
+                            borderwidth: 2
                         },
                         tiling: {
-                            packing: 'squarify'  // Essayez aussi d'autres méthodes comme 'binary' ou 'slice'
+                            packing: 'squarify'
                         }
-                    }];
-
-                    var layout = {
+                    }], {
                         paper_bgcolor: '#f5f5f5',
-                        margin: { t: 60, l: 0, r: 0, b: 0 }, // Ajouter une marge supérieure pour le titre
+                        margin: { t: 60, l: 0, r: 0, b: 0 },
                         title: {
                             text: "Mosaïque des discussions : Visualisation de l'importance des problèmes rencontrés par catégorie",
-                            x: 0.5, // Centrer le titre
-                            xanchor: 'center', // Ancrage du titre au centre
-                            y: 0.95, // Position verticale du titre
+                            x: 0.5,
+                            xanchor: 'center',
+                            y: 0.95,
                             font: {
-                                size: 14, // Réduire la taille de la police
+                                size: 14,
                             }
                         },
                         autosize: true,
-                    };
-
-                    Plotly.newPlot('treemap', treemapData, layout);
-
-                    // Fonction pour redimensionner la treemap en réponse à un redimensionnement de la fenêtre
-                    window.addEventListener('resize', function() {
-                        Plotly.relayout('treemap', {
-                            width: document.getElementById('treemap').offsetWidth, // Utiliser la largeur de l'élément parent
-                            height: window.innerHeight * 0.8 // Mettre à jour la hauteur en fonction de la fenêtre
-                        });
                     });
 
+                    // Mettre à jour le bar-chart des problèmes
+                    var problemCounts = {};
+                    filteredData.forEach(function(d) {
+                        var problem = d.prediction_sous_motif;
+                        problemCounts[problem] = (problemCounts[problem] || 0) + 1;
+                    });
 
-                // BAR-CHART - Top des problèmes rencontrés //
-                var problemCounts = {};
+                    var sortedProblems = Object.keys(problemCounts).sort(function(a, b) {
+                        return problemCounts[b] - problemCounts[a];
+                    });
 
-                data.forEach(function(d) {
-                    var problem = d.prediction_sous_motif;
-                    problemCounts[problem] = (problemCounts[problem] || 0) + 1;
-                });
+                    var topProblems = sortedProblems.slice(0, 10);
+                    var topCounts = topProblems.map(function(problem) {
+                        return problemCounts[problem];
+                    });
 
-                var sortedProblems = Object.keys(problemCounts).sort(function(a, b) {
-                    return problemCounts[b] - problemCounts[a];
-                });
+                    Plotly.react('bar-chart-problemes', [{
+                        type: 'bar',
+                        x: topCounts.reverse(),
+                        y: topProblems.reverse(),
+                        orientation: 'h'
+                    }], {
+                        title: {
+                            text: "Top 10 des problèmes rencontrés par les utilisateurs",
+                            x: 0.5,
+                            xanchor: 'center'
+                        },
+                        margin: { t: 100, l: 250, r: 20 },
+                        height: topProblems.length * 50 + 100,
+                        yaxis: {
+                            tickprefix: '  ',
+                            ticksuffix: '  ',
+                            automargin: true
+                        }
+                    });
 
-                var topProblems = sortedProblems.slice(0, 10);
-                var topCounts = topProblems.map(function(problem) {
-                    return problemCounts[problem];
-                });
+                    // Mettre à jour le bar-chart des jeux de données
+                    var sortedDatasets = Object.keys(updatedDatasetCounts).sort(function(a, b) {
+                        return updatedDatasetCounts[b] - updatedDatasetCounts[a];
+                    });
 
-                var barData = [{
-                    type: 'bar',
-                    x: topCounts.reverse(),
-                    y: topProblems.reverse(),
-                    orientation: 'h'
-                }];
+                    var topDatasets = sortedDatasets.slice(0, 5);
+                    var topDatasetCounts = topDatasets.map(function(dataset) {
+                        return updatedDatasetCounts[dataset];
+                    });
 
-                var barLayout = {
-                    title: {
-                        text: "Top 10 des problèmes rencontrés par les utilisateurs",
-                        x: 0.5,
-                        xanchor: 'center'
-                    },
-                    margin: { t: 100, l: 250, r: 20 }, // Ajouter une marge gauche pour les étiquettes
-                    height: topProblems.length * 50 + 100, // Dynamically set height based on number of bars and increase bar height
-                    yaxis: {
-                        tickprefix: '  ', // Add space before the labels
-                        ticksuffix: '  ', // Add space after the labels
-                        automargin: true // Automatically adjust margin for y-axis labels
-                    }
-                };
+                    Plotly.react('bar-chart-discussions', [{
+                        type: 'bar',
+                        x: topDatasetCounts.reverse(),
+                        y: topDatasets.reverse(),
+                        orientation: 'h'
+                    }], {
+                        title: {
+                            text: "Top 5 des jeux de données les plus discutés",
+                            x: 0.5,
+                            xanchor: 'center'
+                        },
+                        margin: { t: 100, l: 250, r: 20 },
+                        height: topDatasets.length * 50 + 100,
+                        yaxis: {
+                            tickprefix: '  ',
+                            ticksuffix: '  ',
+                            automargin: true
+                        }
+                    });
+                }
 
-                Plotly.newPlot('bar-chart-problemes', barData, barLayout);
+                // Appliquer les filtres à l'initialisation
+                updateGraphs();
 
-                // Responsif : Fonction pour redimensionner le bar-chart en réponse à un redimensionnement de la fenêtre
+                // Ajouter des écouteurs d'événements pour les filtres
+                document.getElementById("publisher-filter").addEventListener("change", updateGraphs);
+
+                // Fonction pour redimensionner les graphiques en réponse à un redimensionnement de la fenêtre
                 window.addEventListener('resize', function() {
+                    Plotly.relayout('treemap', {
+                        width: document.getElementById('treemap').offsetWidth,
+                        height: window.innerHeight * 0.8
+                    });
+
                     Plotly.relayout('bar-chart-problemes', {
-                        width: document.getElementById('bar-chart-problemes').offsetWidth, // Utiliser la largeur de l'élément parent
-                        height: topProblems.length * 50 + 100 // Mettre à jour la hauteur en fonction de la fenêtre
+                        width: document.getElementById('bar-chart-problemes').offsetWidth,
+                        height: document.getElementById('bar-chart-problemes').offsetHeight
                     });
-                });
 
-                // BAR-CHART - Top des jdd les plus discutés //
-
-                var sortedDatasets = Object.keys(datasetCounts).sort(function(a, b) {
-                    return datasetCounts[b] - datasetCounts[a];
-                });
-
-                var topDatasets = sortedDatasets.slice(0, 5);
-                var topDatasetCounts = topDatasets.map(function(dataset) {
-                    return datasetCounts[dataset];
-                });
-
-                var barData2 = [{
-                    type: 'bar',
-                    x: topDatasetCounts.reverse(),
-                    y: topDatasets.reverse(),
-                    orientation: 'h'
-                }];
-
-                var barLayout2 = {
-                    title: {
-                        text: "Top 5 des jeux de données les plus discutés",
-                        x: 0.5,
-                        xanchor: 'center'
-                    },
-                    margin: { t: 100, l: 250, r: 20 }, // Ajouter une marge gauche pour les étiquettes
-                    height: topDatasets.length * 50 + 100, // Dynamically set height based on number of bars and increase bar height
-                    yaxis: {
-                        tickprefix: '  ', // Add space before the labels
-                        ticksuffix: '  ', // Add space after the labels
-                        automargin: true // Automatically adjust margin for y-axis labels
-                    }
-                };
-
-                Plotly.newPlot('bar-chart-discussions', barData2, barLayout2);
-
-                // Responsif : Fonction pour redimensionner le bar-chart en réponse à un redimensionnement de la fenêtre
-                window.addEventListener('resize', function() {
                     Plotly.relayout('bar-chart-discussions', {
-                        width: document.getElementById('bar-chart-discussions').offsetWidth, // Utiliser la largeur de l'élément parent
-                        height: topDatasets.length * 50 + 100 // Mettre à jour la hauteur en fonction de la fenêtre
+                        width: document.getElementById('bar-chart-discussions').offsetWidth,
+                        height: document.getElementById('bar-chart-discussions').offsetHeight
                     });
                 });
-                }).catch(function(error) {
-                console.log(error); // Gérer les éventuelles erreurs de chargement du fichier JSON
-                });
-            </script>
-
-            <!-- BAR-CHART - Top des problèmes rencontrés -->
-            <div id="bar-chart-problemes" class="graph-container"></div>
-
-            <!-- BAR-CHART - Top des jdd les plus discutés -->
-            <div id="bar-chart-discussions" class="graph-container"></div>
-        </div>
+            }).catch(function(error) {
+                console.log(error);
+            });
+        </script>
     </section>
 {% endblock %}
