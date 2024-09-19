@@ -171,7 +171,7 @@ def test_process_and_store_data(tinydb_repository, api_type, sample_data):
         sample_discussions_data = json.load(f)
 
     # Utiliser patch pour simuler les appels API
-    with patch("infrastructure.services.api_fetcher_manager.APIFetcherManager.get_client") as mock_get_client:
+    with patch("src.infrastructure.services.api_fetcher_manager.APIFetcherManager.get_client") as mock_get_client:
         mock_fetcher = mock_get_client.return_value
         mock_fetcher.fetch_discussions.return_value = sample_discussions_data
         mock_fetcher.fetch_datasets.return_value = []
