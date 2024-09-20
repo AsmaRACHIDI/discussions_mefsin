@@ -14,6 +14,13 @@
                 <select id="publisher-filter" class="custom-select">
                     <option value="all">Toutes les directions métier</option>
                 </select>
+
+                <label for="source-filter" style="margin-left: 20px;">Filtrer par Source :</label>
+                <select id="source-filter" class="custom-select">
+                    <option value="all">Toutes les sources</option>
+                    <option value="data_gouv">data_gouv</option>
+                    <option value="data_eco">data_eco</option>
+                </select>
             </div>  
             <div id="treemap" class="graph-container"></div>
             <div id="bar-chart-problemes" class="graph-container"></div>
@@ -26,7 +33,7 @@
                 var publisherCounts = {};
                 var publishers = new Set();
 
-                // Initialiser les publisher
+                // Initialiser les publishers
                 data.forEach(function(d) {
                     var publisher = d.dataset_publisher;
                     publisherCounts[publisher] = (publisherCounts[publisher] || 0) + 1;
@@ -41,12 +48,15 @@
                     document.getElementById("publisher-filter").appendChild(option);
                 });
 
-                // Fonction pour mettre à jour les graphiques en fonction du filtre
+                // Fonction pour mettre à jour les graphiques en fonction des filtres
                 function updateGraphs() {
                     var selectedPublisher = document.getElementById("publisher-filter").value;
+                    var selectedSource = document.getElementById("source-filter").value;
 
                     var filteredData = data.filter(function(d) {
-                        return selectedPublisher === "all" || d.dataset_publisher === selectedPublisher;
+                        var matchesPublisher = selectedPublisher === "all" || d.dataset_publisher === selectedPublisher;
+                        var matchesSource = selectedSource === "all" || d.source === selectedSource;
+                        return matchesPublisher && matchesSource;
                     });
 
                     var updatedCategoryCounts = {};
@@ -198,6 +208,7 @@
 
                 // Ajouter des écouteurs d'événements pour les filtres
                 document.getElementById("publisher-filter").addEventListener("change", updateGraphs);
+                document.getElementById("source-filter").addEventListener("change", updateGraphs);
 
                 // Fonction pour redimensionner les graphiques en réponse à un redimensionnement de la fenêtre
                 window.addEventListener('resize', function() {
