@@ -9,7 +9,7 @@
             <!-- Filtres pour la direction métier, source, prediction_motif et prediction_sous_motif -->
             <div class="filters mb-3 d-flex flex-wrap justify-content-between">
                 <div class="filter-item mb-2">
-                    <label for="source-filter">Filtrer par Source :</label>
+                    <label for="source-filter">Filtrer par source :</label>
                     <select id="source-filter" class="custom-select">
                         <option value="all">Toutes les sources</option>
                         {% for source in sources %}
@@ -19,7 +19,7 @@
                 </div>
             
                 <div class="filter-item mb-2">
-                    <label for="publisher-filter">Filtrer par Éditeur :</label>
+                    <label for="publisher-filter">Filtrer par éditeur :</label>
                     <select id="publisher-filter" class="custom-select">
                         <option value="all">Tous les éditeurs</option>
                         {% for publisher in publishers %}
@@ -29,9 +29,9 @@
                 </div>
             
                 <div class="filter-item mb-2">
-                    <label for="motif-filter">Filtrer par Motif :</label>
+                    <label for="motif-filter">Filtrer par catégorie :</label>
                     <select id="motif-filter" class="custom-select">
-                        <option value="all">Tous les motifs</option>
+                        <option value="all">Toutes les catégories</option>
                         {% for motif in motifs %}
                             <option value="{{ motif }}">{{ motif }}</option>
                         {% endfor %}
@@ -39,9 +39,9 @@
                 </div>
             
                 <div class="filter-item mb-2">
-                    <label for="sous-motif-filter">Filtrer par Sous-Motif :</label>
+                    <label for="sous-motif-filter">Filtrer par sous-catégorie :</label>
                     <select id="sous-motif-filter" class="custom-select">
-                        <option value="all">Tous les sous-motifs</option>
+                        <option value="all">Toutes les sous-catégories</option>
                         {% for sous_motif in sous_motifs %}
                             <option value="{{ sous_motif }}">{{ sous_motif }}</option>
                         {% endfor %}
