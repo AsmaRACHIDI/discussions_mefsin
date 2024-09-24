@@ -15,7 +15,6 @@ def dashboard():
 
 ##################### JOUER AVEC L'IA : FORMULAIRE #################################################################
 
-# Route pour le formulaire de la sandbox
 @app.route("/form", methods=["GET", "POST"])
 def sandbox_route():
     if request.method == "GET":
@@ -33,7 +32,6 @@ def sandbox_route():
 def sandbox_result():
     if request.method == "GET":
         # Traitement pour la méthode GET
-        # Récupérez les données passées depuis le formulaire
         title = request.args.get("title")
         message = request.args.get("message")
         prediction_motif = request.args.get("prediction_motif")
@@ -43,7 +41,6 @@ def sandbox_result():
         return render_template("sandbox-result.html", title=title, message=message, prediction_motif=prediction_motif, prediction_sous_motif=prediction_sous_motif)
     elif request.method == "POST":
         # Traitement pour la méthode POST
-        # Effectuez le traitement du formulaire POST ici si nécessaire
         title = request.form.get("title")
         message = request.form.get("message")
         prediction_motif, prediction_sous_motif = annotate_a_message(discussion_title=title, comment=message)
@@ -58,12 +55,18 @@ def dataset():
     # Charger le fichier JSON en tant que DataFrame
     df = pd.read_json("app/static/data/test.json")
     df = df.reset_index()
-    
+
     # Obtenir les colonnes et les données
     columns = df.columns.tolist()
     data = df.values.tolist()
-    
-    return render_template('dataset.html', columns=columns, data=data)
+
+    # Extraire les valeurs uniques pour les filtres
+    sources = df['source'].unique().tolist()
+    publishers = df['dataset_publisher'].unique().tolist()
+    motifs = df['prediction_motif'].unique().tolist()
+    sous_motifs = df['prediction_sous_motif'].unique().tolist()
+
+    return render_template('dataset.html', columns=columns, data=data, sources=sources, publishers=publishers, motifs=motifs, sous_motifs=sous_motifs)
 
 
 @app.route('/dataset/download/csv')

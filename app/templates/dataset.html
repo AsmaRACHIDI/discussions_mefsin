@@ -1,24 +1,64 @@
-{% extends 'base.html' %}
-
-{% block title %}CategorIA | Dataset{% endblock %}
-
 {% block content %}
     {% include 'sidebar.html' %}
 
     <section class="dashboard">
+
         <div class="text">Présentation du jeu de données annoté par le modèle d'IA</div>
+        
         <div class="table-container">
-            <table id="example" class="table table-striped table-hover table-bordered" style="width:100%">
+            <!-- Filtres pour la direction métier, source, prediction_motif et prediction_sous_motif -->
+            <div class="filters mb-3 d-flex flex-wrap justify-content-between">
+                <div class="filter-item mb-2">
+                    <label for="source-filter">Filtrer par Source :</label>
+                    <select id="source-filter" class="custom-select">
+                        <option value="all">Toutes les sources</option>
+                        {% for source in sources %}
+                            <option value="{{ source }}">{{ source }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            
+                <div class="filter-item mb-2">
+                    <label for="publisher-filter">Filtrer par Éditeur :</label>
+                    <select id="publisher-filter" class="custom-select">
+                        <option value="all">Tous les éditeurs</option>
+                        {% for publisher in publishers %}
+                            <option value="{{ publisher }}">{{ publisher }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            
+                <div class="filter-item mb-2">
+                    <label for="motif-filter">Filtrer par Motif :</label>
+                    <select id="motif-filter" class="custom-select">
+                        <option value="all">Tous les motifs</option>
+                        {% for motif in motifs %}
+                            <option value="{{ motif }}">{{ motif }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            
+                <div class="filter-item mb-2">
+                    <label for="sous-motif-filter">Filtrer par Sous-Motif :</label>
+                    <select id="sous-motif-filter" class="custom-select">
+                        <option value="all">Tous les sous-motifs</option>
+                        {% for sous_motif in sous_motifs %}
+                            <option value="{{ sous_motif }}">{{ sous_motif }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            
+
+            <table id="example" class="table table-striped" style="width:100%">
                 <thead>
                     <tr id="table-header">
-                        <!-- Les colonnes seront insérées dynamiquement ici -->
                         {% for column in columns %}
                             <th>{{ column }}</th>
                         {% endfor %}
                     </tr>
                 </thead>
                 <tbody id="table-body">
-                    <!-- Les lignes de données seront insérées dynamiquement ici -->
                     {% for row in data %}
                         <tr>
                             {% for item in row %}
@@ -44,14 +84,52 @@
     </section>
 
     <script>
-        // Initialiser DataTables après le rendu du tableau
         $(document).ready(function() {
-            if (!$.fn.DataTable.isDataTable('#example')) {
-                $('#example').DataTable({
-                    responsive: true  // Activation du mode responsive
-                });
-            }
+            var table = $('#example').DataTable();
+
+            // Filtre par Source
+            $('#source-filter').on('change', function() {
+                var selectedSource = $(this).val();
+                var sourceColumnIndex = {{ columns.index('source') }};
+                if (selectedSource !== "all") {
+                    table.column(sourceColumnIndex).search(selectedSource).draw();
+                } else {
+                    table.column(sourceColumnIndex).search('').draw();
+                }
+            });
+
+            // Filtre par Éditeur
+            $('#publisher-filter').on('change', function() {
+                var selectedPublisher = $(this).val();
+                var publisherColumnIndex = {{ columns.index('dataset_publisher') }};
+                if (selectedPublisher !== "all") {
+                    table.column(publisherColumnIndex).search(selectedPublisher).draw();
+                } else {
+                    table.column(publisherColumnIndex).search('').draw();
+                }
+            });
+
+            // Filtre par Motif
+            $('#motif-filter').on('change', function() {
+                var selectedMotif = $(this).val();
+                var motifColumnIndex = {{ columns.index('prediction_motif') }};
+                if (selectedMotif !== "all") {
+                    table.column(motifColumnIndex).search(selectedMotif).draw();
+                } else {
+                    table.column(motifColumnIndex).search('').draw();
+                }
+            });
+
+            // Filtre par Sous-Motif
+            $('#sous-motif-filter').on('change', function() {
+                var selectedSousMotif = $(this).val();
+                var sousMotifColumnIndex = {{ columns.index('prediction_sous_motif') }};
+                if (selectedSousMotif !== "all") {
+                    table.column(sousMotifColumnIndex).search(selectedSousMotif).draw();
+                } else {
+                    table.column(sousMotifColumnIndex).search('').draw();
+                }
+            });
         });
     </script>
 {% endblock %}
-
