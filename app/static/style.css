@@ -149,12 +149,16 @@ body.dark #example_info {
 .sidebar .image-text img {
     width: 52px;
     border-radius: 10px;
+    margin-top: 3px;
 }
 
 .sidebar header .image-text {
     display: flex;
     align-items: center;
+    flex-direction: column; /* This stacks the logo and the text vertically */
+    align-items: center;    /* Aligns the logo and text horizontally */
 }
+
 
 header .image-text .header-text {
     display: flex;
@@ -163,7 +167,7 @@ header .image-text .header-text {
 
 .header-text .name {
     font-weight: 600;
-    font-size: 21px;
+    font-size: 20px;
 }
 
 /* .header-text .profession {
@@ -680,3 +684,28 @@ body.dark textarea {
     gap: 10px;
 } 
 */
+
+
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px;
+}
+
+
+
+.image img {
+    width: 100px; /* Adjust the size of the logo as needed */
+}
+
+.header-text .name {
+    font-size: 24px;
+}
+
+.bx-chevron-right {
+    font-size: 23px;
+    align-self: center; /* Align the chevron in the middle vertically */
+    margin-left: auto;  /* Push the chevron to the right */
+    margin-top: 21px;
+}
