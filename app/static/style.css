@@ -261,6 +261,7 @@ body.dark .sidebar li a:hover .text {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    padding-bottom: 30px !important;
 }
 
 .menu-bar .mode {
@@ -306,6 +307,8 @@ body.dark .menu-bar .mode i.moon {
     background: var(--primary-color-light);
     transition: var(--tran-05);
 }
+
+
 
 .toggle-switch .switch {
     position: relative;
@@ -709,3 +712,4 @@ body.dark textarea {
     margin-left: auto;  /* Push the chevron to the right */
     margin-top: 21px;
 }
+
