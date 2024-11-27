@@ -101,3 +101,32 @@ document.addEventListener("DOMContentLoaded", function() {
     resetSubmitButton();
 });
 
+
+// Script pour gérer le bouton "Annoter le fichier"
+document.addEventListener("DOMContentLoaded", function() {
+  const annotateForm = document.querySelector('form[action="/form/upload"]');
+  const annotateButton = document.getElementById('annotateButton');
+
+  // Fonction pour réinitialiser le bouton
+  function resetAnnotateButton() {
+      annotateButton.disabled = false;
+      annotateButton.value = "Annoter le fichier";
+  }
+
+  // Gestion de la soumission du formulaire
+  annotateForm?.addEventListener('submit', function() {
+      annotateButton.disabled = true;
+      annotateButton.value = "Traitement...";
+  });
+
+  // Réinitialisation du bouton lorsque la page devient visible
+  document.addEventListener('visibilitychange', function() {
+      if (document.visibilityState === 'visible') {
+          resetAnnotateButton();
+      }
+  });
+
+  // Réinitialiser le bouton au chargement de la page
+  resetAnnotateButton();
+});
+
