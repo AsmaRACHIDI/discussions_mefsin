@@ -78,8 +78,6 @@ def process_and_store_data(api_type):
         message = create_message(discussion, dataset, discussion_title)
         repository.add_message(message)
 
-    print(f"Finished processing discussions from {api_type}")
-
 
 def infer_and_update_messages():
     repository = TinyDBCommentRepository()
