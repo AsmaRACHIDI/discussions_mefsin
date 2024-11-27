@@ -1,0 +1,54 @@
+{% extends 'base.html' %}
+
+{% block title %}CategorIA | Annotation fichier{% endblock %}
+
+{% block content %}
+    {% include 'sidebar.html' %}
+
+    <section class="dashboard">
+        <div class="text">Annoter un fichier</div>
+
+        <div class="form_box">
+            <p><strong>Instructions :</strong></p>
+            <ul>
+                <li>Le fichier doit être au format <code>.csv</code>, <code>.json</code>, <code>.xls</code> ou <code>.xlsx</code>.</li>
+                <li>Les colonnes suivantes sont obligatoires :
+                    <ul>
+                        <li><code>title</code> : le titre de la discussion.</li>
+                        <li><code>message</code> : le contenu du message à annoter.</li>
+                    </ul>
+                </li>
+                <li>Assurez-vous que le fichier contient ces colonnes pour un traitement correct.</li>
+            </ul>
+
+            {% if error %}
+                <!-- Affichage des erreurs -->
+                <div class="error-message">
+                    <p>{{ error }}</p>
+                </div>
+            {% elif file_processed %}
+                <!-- Affichage des boutons après succès -->
+                <div class="success-message">
+                    <p>Le fichier a été annoté avec succès !</p>
+                    <div class="button-group">
+                        <a href="data:{{ mimetype }};base64,{{ download_file | b64encode }}" download="{{ download_name }}">
+                            <button class="btn succes">Télécharger le fichier annoté</button>
+                        </a>
+                        <a href="{{ url_for('upload_file') }}">
+                            <button class="btn secondary">Soumettre un autre fichier</button>
+                        </a>
+                    </div>
+                </div>
+            {% else %}
+                <!-- Formulaire pour soumettre un fichier -->
+                <form action="/form/upload" method="post" enctype="multipart/form-data">
+                    <div class="form_box">
+                        <label for="file">Sélectionnez un fichier à annoter (.csv, .json, .xls ou .xlsx) :</label><br><br>
+                        <input type="file" id="file" name="file" accept=".csv, .json, .xls, .xlsx" required><br><br>
+                        <input type="submit" id="annotateButton" value="Annoter le fichier">
+                    </div>
+                </form>                
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}
