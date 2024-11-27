@@ -145,11 +145,17 @@ body.dark #example_info {
     position: relative;
 }
 
+
 /* Logo sidebar */
-.sidebar .image-text img {
-    width: 52px;
+.sidebar .image img {
+    width: 86px;
     border-radius: 10px;
-    margin-top: 3px;
+    margin-top: -20px;
+}
+.sidebar .text {
+    width: 82px;
+    border-radius: 10px;
+    align-items: center;
 }
 
 .sidebar header .image-text {
@@ -429,8 +435,112 @@ label {
 
 /* SANDBOX */  
 
+.success-message {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #e0ffe0;
+    border: 1px solid #b3ffb3;
+    border-radius: 5px;
+}
+
+.error-message {
+    margin-top: 20px;
+    padding: 15px;
+    background-color: #ffe0e0;
+    border: 1px solid #ffb3b3;
+    border-radius: 5px;
+}
+
+.button-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 15px;
+}
+
+
+
+/* Boutons avec la classe .btn */
+.btn {
+    display: inline-block;
+    background-color: #69e784; /* Vert vif */
+    color: black !important; /* Texte blanc */
+    border: 2px solid #28a745; /* Bordure verte marquée */
+    padding: 12px 24px;
+    border-radius: 16px !important; /* Bords arrondis */
+    font-size: 18px; /* Taille de police un peu plus grande */
+    font-weight: bold;
+    text-align: center;
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease; /* Transitions pour les effets */
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombre légère */
+}
+
+/* Effet de survol pour faire ressortir les boutons */
+.btn:hover {
+    color: #000 !important;
+    background-color: #218838 !important; /* Vert plus foncé au survol */
+    border-color: #218838; /* Bordure plus foncée */
+    transform: scale(1.1); /* Agrandissement léger */
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Ombre renforcée */
+}
+
+/* Désactivation du bouton */
+.btn:disabled {
+    background-color: #6c757d; /* Gris clair */
+    cursor: not-allowed; /* Curseur interdit */
+    opacity: 0.65; /* Plus de transparence */
+    border: 2px solid #6c757d; /* Bordure grise */
+}
+
+/* Variante pour les boutons de succès (vert plus clair) */
+.btn.success {
+    background-color: #34d058 !important; /* Vert clair */
+    border-color: #34d058 !important;
+}
+
+.btn.success:hover {
+    color: black !important;
+    background-color: #28a745 !important; /* Retour au vert vif au survol */
+    border-color: #28a745 !important;
+}
+
+/* Variante pour les boutons secondaires (vert plus foncé) */
+.btn.secondary {
+    background-color: #69e784 !important; /* Vert foncé */
+    border-color: #218838 !important;
+}
+
+.btn.secondary:hover {
+    color: black !important;
+    background-color: #1e7e34 !important; /* Vert encore plus foncé au survol */
+    border-color: #1e7e34 !important;
+}
+
+
+/* Nouveau style de bouton */
+#annotateButton {
+    background-color: #173252; /* Bleu clair */
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 36px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#annotateButton:hover {
+background-color: #234f85; /* Nouvelle couleur de fond au survol */
+}
+
+#annotateButton:disabled {
+    background-color: #6C757D; /* Gris */
+    cursor: not-allowed;
+}
+
+
 .form_box {
-    margin: 16px;
+    margin: 20px;
     margin-top: 20px;
     margin-bottom: 20px;
     text-align: left;
@@ -713,3 +823,31 @@ body.dark textarea {
     margin-top: 21px;
 }
 
+
+.btn-dropdown {
+    display: inline-block;
+    background-color: #173252;
+    color: white;
+    padding: 16px 40px;
+    border-radius: 16px;
+    max-width: fit-content; /* Limite la largeur au contenu */
+    margin-bottom: 30px; /* Ajoute de l'espace sous le bouton */
+    margin-top: 30px;
+}
+
+.btn-dropdown:hover {
+    background-color: #234f85;
+}
+
+
+
+
+/* Changer la couleur du texte pour h4 en mode sombre */
+body.dark h4 {
+    color: #DDD; /* Exemple de couleur : blanc cassé */
+}
+
+/* Changer la couleur du texte pour li en mode sombre */
+body.dark li {
+    color: #DDD; /* Exemple de couleur : blanc cassé */
+}
