@@ -263,7 +263,7 @@ body.dark .sidebar li a:hover .text {
 }
 
 .sidebar .menu-bar {
-    height: calc(100% - 50px);
+    height: calc(100% - 75px); /*changer hauteur sidebar */
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -519,22 +519,24 @@ label {
 
 
 /* Nouveau style de bouton */
-#annotateButton {
-    background-color: #173252; /* Bleu clair */
-    color: white;
-    border: none;
+body.dark #annotateButton {
+    background-color: #444; /* Couleur de fond sombre pour le bouton */
+    color: #FFF; /* Couleur du texte en blanc */
+    border: 1px solid #555; /* Bordure plus claire pour contraster avec le fond */
     padding: 10px 20px;
     border-radius: 36px;
     cursor: pointer;
     font-size: 16px;
 }
 
-#annotateButton:hover {
-background-color: #234f85; /* Nouvelle couleur de fond au survol */
+body.dark #annotateButton:hover {
+    background-color: #555; /* Fond légèrement plus clair au survol */
 }
 
-#annotateButton:disabled {
-    background-color: #6C757D; /* Gris */
+body.dark #annotateButton:disabled {
+    background-color: #6C757D; /* Gris pour l'état désactivé */
+    color: #FFF; /* Couleur de texte blanche même désactivée */
+    border: 1px solid #6C757D; /* Harmonisation de la bordure avec le fond */
     cursor: not-allowed;
 }
 
@@ -824,6 +826,7 @@ body.dark textarea {
 }
 
 
+/* Mode clair */
 .btn-dropdown {
     display: inline-block;
     background-color: #173252;
@@ -837,6 +840,27 @@ body.dark textarea {
 
 .btn-dropdown:hover {
     background-color: #234f85;
+}
+
+body.light .btn-dropdown:hover {
+    background-color: #234f85; /* Fond bleu plus foncé au survol */
+}
+
+/* Mode sombre */
+body.dark .btn-dropdown {
+    display: inline-block;
+    background-color: #444; /* Couleur de fond sombre pour le bouton */
+    color: #FFF; /* Couleur du texte en blanc */
+    padding: 16px 40px;
+    border-radius: 16px;
+    max-width: fit-content; /* Limite la largeur au contenu */
+    margin-bottom: 30px; /* Ajoute de l'espace sous le bouton */
+    margin-top: 30px;
+    border: 1px solid #555; /* Bordure plus claire pour contraster */
+}
+
+body.dark .btn-dropdown:hover {
+    background-color: #555; /* Fond légèrement plus clair au survol */
 }
 
 
