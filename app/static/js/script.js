@@ -26,7 +26,8 @@ new DataTable('#example', {
         }
       },
       "scrollX": true, // Activer le défilement horizontal
-      "scrollY": 600, // Définir une hauteur fixe pour le défilement vertical
+      "scrollY": 500, // Définir une hauteur fixe pour le défilement vertical
+      scrollCollapse: true, // Permet de réduire si moins de données
       autoWidth: true,
   });
 

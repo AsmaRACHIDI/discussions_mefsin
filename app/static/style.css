@@ -8,12 +8,16 @@
     src: url('fonts/Marianne-Bold.woff');
 }
 
-* {
+/* * {
     font-family: 'Marianne', Arial, sans-serif;
     box-sizing: border-box;
-}
+} */
 
 :root {
+    /* ===== Surcharge Bootstrap Font ===== */
+    --bs-body-font-family: 'Marianne', Arial, sans-serif;
+    box-sizing: border-box;
+
     /* ===== Light Colors ===== */
     --body-color: #E4E9F7;
     --sidebar-color: #FFF;
@@ -27,6 +31,16 @@
     --tran-03: all 0.3s ease;
     --tran-04: all 0.4s ease;
     --tran-05: all 0.5s ease;
+}
+
+html {
+    font-size: 11pt; /* fixe la police du html  */
+}
+
+h4 {
+    font-weight: 400 !important; /* Applique le poids spécifique */
+    color: var(--text-color); /* Utilise la variable text-color */
+    margin-left: 1rem;
 }
 
 body {
@@ -74,6 +88,11 @@ body.dark #example_info {
     color: black !important;
 }
 
+
+#example th, #example td {
+    font-size: 1rem; 
+}
+
 /* ======================*/
 /* ======= SIDEBAR ======*/
 /* ======================*/
@@ -97,7 +116,7 @@ body.dark #example_info {
 /* ===== Resuable CSS ===== */
 
 .sidebar .text {
-    font-size: 16px;
+    font-size: 1.1rem;
     font-weight: 500;
     color: var(--text-color);
     transition: var(--tran-03);
@@ -121,7 +140,7 @@ body.dark #example_info {
 /* icons sidebar */
 .sidebar li .icon {
     min-width: 60px;
-    font-size: 24px;
+    font-size: 1.7rem;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -171,14 +190,6 @@ header .image-text .header-text {
     flex-direction: column;
 }
 
-.header-text .name {
-    font-weight: 600;
-    font-size: 20px;
-}
-
-/* .header-text .profession {
-    margin-top: -2px;
-} */
 
 .sidebar header .toggle {
     position: absolute;
@@ -193,7 +204,6 @@ header .image-text .header-text {
     justify-content: center;
     border-radius: 50%;
     color: var(--sidebar-color);
-    font-size: 22px;
     transition: var(--tran-03);
 }
 
@@ -355,8 +365,8 @@ body.dark .switch::before {
 }
 
 .dashboard .text {
-    font-size: 30px;
-    font-weight: bold;
+    font-size: 2rem;
+    font-weight: 500 !important;
     color: var(--text-color);
     padding: 30px 40px 30px 30px;
 }
@@ -429,9 +439,9 @@ form {
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-label {
+/* label {
     font-weight: bold;
-}
+} */
 
 /* SANDBOX */  
 
@@ -460,61 +470,30 @@ label {
 
 
 /* Boutons avec la classe .btn */
-.btn {
-    display: inline-block;
-    background-color: #69e784; /* Vert vif */
-    color: black !important; /* Texte blanc */
-    border: 2px solid #28a745; /* Bordure verte marquée */
-    padding: 12px 24px;
-    border-radius: 16px !important; /* Bords arrondis */
-    font-size: 18px; /* Taille de police un peu plus grande */
-    font-weight: bold;
-    text-align: center;
-    text-decoration: none;
-    cursor: pointer;
-    transition: all 0.3s ease; /* Transitions pour les effets */
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.2); /* Ombre légère */
+.btn.succes {
+    background-color: #69e784; /* Vert foncé */
+    border-color: #218838;
+    border-radius: 1.5rem;
 }
 
-/* Effet de survol pour faire ressortir les boutons */
-.btn:hover {
-    color: #000 !important;
-    background-color: #218838 !important; /* Vert plus foncé au survol */
-    border-color: #218838; /* Bordure plus foncée */
-    transform: scale(1.1); /* Agrandissement léger */
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3); /* Ombre renforcée */
-}
-
-/* Désactivation du bouton */
-.btn:disabled {
-    background-color: #6c757d; /* Gris clair */
-    cursor: not-allowed; /* Curseur interdit */
-    opacity: 0.65; /* Plus de transparence */
-    border: 2px solid #6c757d; /* Bordure grise */
-}
-
-/* Variante pour les boutons de succès (vert plus clair) */
-.btn.success {
-    background-color: #34d058 !important; /* Vert clair */
-    border-color: #34d058 !important;
-}
-
-.btn.success:hover {
-    color: black !important;
-    background-color: #28a745 !important; /* Retour au vert vif au survol */
-    border-color: #28a745 !important;
+.btn.succes:hover {
+    color: white;
+    background-color: #1e7e34; /* Vert encore plus foncé au survol */
+    border-color: #1e7e34;
 }
 
 /* Variante pour les boutons secondaires (vert plus foncé) */
 .btn.secondary {
-    background-color: #69e784 !important; /* Vert foncé */
-    border-color: #218838 !important;
+    color: white;
+    background-color: #2662ac;
+    border-color: #20497c;
+    border-radius: 1.5rem;
 }
 
 .btn.secondary:hover {
-    color: black !important;
-    background-color: #1e7e34 !important; /* Vert encore plus foncé au survol */
-    border-color: #1e7e34 !important;
+    color: white;
+    background-color: #1a4477;
+    border-color: #15365e;
 }
 
 
@@ -565,7 +544,6 @@ input[type="submit"] {
     color: white;
     padding: 18px 20px;
     margin: 8px 0;
-    border: none;
     border-radius: 27px;
     cursor: pointer;
     width: 100%;
@@ -626,7 +604,7 @@ body.dark textarea {
 .card-header {
     background-color: #173252 !important;
     color: #fff !important;
-    font-weight: bold !important;
+    /* font-weight: bold !important; */
     text-align: center !important;
     padding: 14px !important;
 }
@@ -713,7 +691,7 @@ body.dark textarea {
 
 #treemap {
     width: 100%;
-    height: 80vh; /* Utiliser 80% de la hauteur de la fenêtre */
+    height: 72vh; /* Utiliser 80% de la hauteur de la fenêtre */
 }
 
 .graph-container {
@@ -740,7 +718,8 @@ body.dark textarea {
     padding: 10px;
     display: flex;
     align-items: center;
-    margin-right: 20px;
+    justify-content: space-between;
+    padding-left: 2rem;
 }
 
 /* Styles pour le dark mode */
@@ -751,14 +730,11 @@ body.dark textarea {
 }
 
 .filters label {
-    font-weight: bold;
     font-size: 16px;
-    color: #333;
-    margin-right: 10px;
 }
 
 .filters select {
-    padding: 10px;
+    padding: 7px;
     font-size: 16px;
     border-radius: 5px;
     border: 1px solid #ccc;
@@ -766,23 +742,29 @@ body.dark textarea {
     color: #333;
     outline: none;
     transition: border 0.3s ease, box-shadow 0.3s ease;
+    margin-right: 1rem;
 }
 
 .filters select:focus {
     border: 1px solid #007bff;
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    box-shadow: 0 0 5px #3f80ed;
 }
 
 .filters {
     margin-bottom: 20px;
     display: flex;
     align-items: center;
+    gap: 1rem; /* Ajoute un espace uniforme entre les items */
 }
 
+.filter-item {
+    margin-bottom: 0.5rem !important; /* Ajustez cette valeur pour le rendu souhaité */
+    flex-direction: column; /* Aligne label et select en colonne */
+}
 
 .section-title {
     color: var(--text-color); /* Utilise la variable text-color */
-    font-weight: 500;
+    font-weight: 400 !important;
     padding-bottom: 10px;
 }
 
