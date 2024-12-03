@@ -91,6 +91,7 @@ body.dark #example_info {
 
 #example th, #example td {
     font-size: 1rem; 
+    border: 1px solid #c4c2c296; /* Couleur et style de la bordure */
 }
 
 /* ======================*/
@@ -854,11 +855,7 @@ body.dark .btn-dropdown {
     display: inline-block;
     background-color: #444; /* Couleur de fond sombre pour le bouton */
     color: #FFF; /* Couleur du texte en blanc */
-    padding: 16px 40px;
-    border-radius: 16px;
     max-width: fit-content; /* Limite la largeur au contenu */
-    margin-bottom: 30px; /* Ajoute de l'espace sous le bouton */
-    margin-top: 30px;
     border: 1px solid #555; /* Bordure plus claire pour contraster */
 }
 
