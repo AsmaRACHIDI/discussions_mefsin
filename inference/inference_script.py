@@ -1,3 +1,4 @@
+import os
 import sys
 import zipfile
 
@@ -5,7 +6,11 @@ import pandas as pd
 import torch
 from transformers import AutoTokenizer, AutoModelForSequenceClassification
 
-sys.path.append("/home/oem/Documents/open-data-discussions")
+# Chemin de base pour les fichiers de modèles
+BASE_PATH = os.getenv("BASE_PATH", "/home/oem/Documents/open-data-discussions")
+
+# Ajout du chemin à sys.path
+sys.path.append(BASE_PATH)
 
 from inference.preprocess import preprocess_data
 from inference import categories
@@ -20,14 +25,16 @@ sslabels = categories.SSLABELS
 id2sslabel = categories.ID2SSLABEL
 sslabel2id = categories.SSLABEL2ID
 
-
-model1_zip_file = "../trained_models/bert-finetuned-my-data-final_archive.zip"
-model2_zip_file = "../trained_models/bert-finetuned-my-data-final2_archive2.zip"
+model1_zip_file = os.path.join(BASE_PATH, "trained_models/bert-finetuned-my-data-final_archive.zip")
+model2_zip_file = os.path.join(BASE_PATH, "trained_models/bert-finetuned-my-data-final2_archive2.zip")
+# model1_zip_file = "../trained_models/bert-finetuned-my-data-final_archive.zip"
+# model2_zip_file = "../trained_models/bert-finetuned-my-data-final2_archive2.zip"
 
 
 def load_model_from_zip(model_zip, extraction_number):
-    extract_dir = f"/home/oem/Documents/open-data-discussions/trained_models/extracted_model{extraction_number}"
-
+    #extract_dir = f"/home/oem/Documents/open-data-discussions/trained_models/extracted_model{extraction_number}"
+    extract_dir = os.path.join(BASE_PATH, f"trained_models/extracted_model{extraction_number}")
+    
     with zipfile.ZipFile(model_zip, "r") as zip_ref:
         zip_ref.extractall(extract_dir)
 
