@@ -28,3 +28,5 @@ class Config:
 
     MODEL1_ZIP_FILE = os.getenv("MODEL1_ZIP_FILE", "trained_models/bert-finetuned-my-data-final_archive.zip")
     MODEL2_ZIP_FILE = os.getenv("MODEL2_ZIP_FILE", "trained_models/bert-finetuned-my-data-final2_archive2.zip")
+
+    BASE_PATH = os.getenv("BASE_PATH", "/home/oem/Documents/open-data-discussions")
