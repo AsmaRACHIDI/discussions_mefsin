@@ -813,14 +813,35 @@ body.dark textarea {
     display: inline-block;
     background-color: #173252;
     color: white;
-    padding: 16px 40px;
-    border-radius: 16px;
+    padding: 10px 40px;
+    border-radius: 1rem;
     max-width: fit-content; /* Limite la largeur au contenu */
     margin-bottom: 30px; /* Ajoute de l'espace sous le bouton */
     margin-top: 30px;
 }
 
 .btn-dropdown:hover {
+    background-color: #234f85;
+}
+
+
+.button {
+    display: inline-block;
+    background-color: #173252;
+    color: white;
+    padding: 16px 40px;
+    text-align: center;
+    text-decoration: none;
+    border-radius: 16px;
+    transition: background-color 0.3s;
+    display: flex;
+    margin: 0 auto; /* Centre horizontalement */
+    max-width: fit-content; /* Limite la largeur au contenu */
+    margin-bottom: 30px; /* Ajoute de l'espace sous le bouton */
+    margin-top: 30px;
+}
+
+.button:hover {
     background-color: #234f85;
 }
 
