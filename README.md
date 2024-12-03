@@ -25,6 +25,7 @@ L'annotation est réalisée grâce à des modèles de traitement automatique du 
 - `usecases` : Implémente la logique métier et orchestre les interactions entre les différentes couches. -->
 
 Le projet est organisé selon une architecture modulaire (Clean archi et architecture hexagonale) et est organisé en plusieurs dossiers clés :
+
 - `app/` : Contient les fichiers statiques et les templates de l'application (CSS, JS, HTML).
 - `core/` : Fichiers de configuration (comme les clés API, URLs, etc.).
 - `domain/` : Gère les modèles de données et les cas d'utilisation.
@@ -45,114 +46,161 @@ cd open-data-discussions
 ```
 
 ### 2. Configuration des variables d'environnement
+
 Copiez le fichier .env.sample et modifiez-le selon vos besoins (renseigner votre clé API data.economie.gouv.fr):
+
 ```bash
 cp .env.sample .env
 ```
 
 ### 3. Créer un environnement virtuel
+
 Avant d'installer les dépendances, créez un environnement virtuel pour isoler vos paquets Python. Vous avez deux options : utiliser venv ou virtualenv.
 
 **Option 1 :** Utiliser `venv` (recommandé pour Python 3.3+)
+
 ```bash
 python3 -m venv venv
-````
+```
+
 Activez l'environnement virtuel :
+
 - Sur **Linux/MacOS** :
+
 ```bash
 source venv/bin/activate
 ```
+
 - Sur **Windows** :
+
 ```bash
 .\venv\Scripts\activate
 ```
+
 **Option 2 :** Utiliser `virtualenv` (compatible avec Python 2 et 3)
+
 1. Installez pip si ce n'est pas déjà fait :
+
 ```bash
 sudo apt-get install python3-pip
 ```
+
 2. Installez `virtualenv` :
+
 ```bash
 pip install virtualenv
 ```
+
 3. Créez un environnement virtuel :
+
 ```bash
 virtualenv venv
 ```
+
 4. Activez l'environnement virtuel :
+
 - Sur **Linux/MacOS** :
+
 ```bash
 source venv/bin/activate
 ```
+
 - Sur **Windows** :
+
 ```bash
 .\venv\Scripts\activate
 ```
 
 ### 4. Installer les dépendances
+
 Installez les dépendances nécessaires en fonction de l'environnement souhaité :
 
 - Environnement de `Développement`:
+
 ```bash
 pip install -r requirements.dev.txt
 ```
+
 - Environnement de `Production` :
+
 ```bash
 pip install -r requirements.prod.txt
 ```
+
 - Environnement `Data Science` :
+
 ```bash
 pip install -r requirements.ds.txt
 ```
 
 ### 5. Télécharger les modèles d'IA pré-entraînés
+
 Créez un dossier `trained_models` à la racine du projet et téléchargez les poids des modèles pré-entraînés **CamemBERT** :
+
 ```bash
 mkdir trained_models
 ```
+
 ```bash
 cd trained_models
 ```
+
 - Zip Modèle 1 (Catégories) :
+
 ```bash
 wget https://huggingface.co/BercyHub/CamemBERT_classification_discussions/resolve/main/bert-finetuned-my-data-final_archive.zip
 ```
+
 - Zip Modèle 2 (Sous-Catégories) :
+
 ```bash
 wget https://huggingface.co/BercyHub/CamemBERT_classification_discussions/resolve/main/bert-finetuned-my-data-final2_archive2.zip
 ```
 
 ## Récupérer ou Mettre à jour les données
+
 Pour récupérer ou mettre à jour les données à partir des sources API, depuis la racine du projet, exécutez :
+
 ```bash
 make update_data
 ```
 
 ### Ce que Fait `update_data.py`
+
 Le script `update_data.py` récupère les dernières données depuis les APIs ([data.gouv.fr](https://www.data.gouv.fr/fr/) et [data.economie.gouv.fr](https://data.economie.gouv.fr/pages/accueil/)), les formate et les stocke dans la base de données locale.
 
 ## Utilisation
+
 ### Lancer l'Application
+
 Pour lancer l'application front-end (tableau de bord), depuis la racine du projet, exécutez :
+
 ```bash
 python app.py
 ```
 
 ## Exécuter les Tests
+
 ### Tests des Fetchers
+
 Exécutez les tests des fetchers avec la commande :
+
 ```bash
 make test_fetchers
 ```
 
 ### Test des Usecases
+
 Exécutez les tests des différents cas d'usages :
+
 ```bash
 make test_usecases
 ```
 
 ### Lancer tous les tests
+
 Pour lancer tous les tests :
+
 ```bash
 make test_all
 ```
@@ -160,11 +208,13 @@ make test_all
 ### Structure des tests
 
 Les tests génèrent des fichiers JSON dans le répertoire tests/fixtures/. Ces fichiers contiennent :
-- Données brutes dans ```unformatted_data/```
-- Données formatées dans ```formatted_data/```
-- Échantillons de tests dans ```samples_data/```
 
-## Structure du Projet 
+- Données brutes dans `unformatted_data/`
+- Données formatées dans `formatted_data/`
+- Échantillons de tests dans `samples_data/`
+
+## Structure du Projet
+
 ```
 ├── app/                    # Contient les fichiers statiques et les templates
 │   ├── static/             # Fichiers statiques (images, CSS, JS) pour l'application front-end
